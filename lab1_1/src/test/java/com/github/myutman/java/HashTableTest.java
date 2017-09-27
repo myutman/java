@@ -1,22 +1,19 @@
 package com.github.myutman.java;
 
-/*import org.jboss.arquillian.container.test.api.Deployment;
-import org.jboss.arquillian.junit.Arquillian;
-import org.jboss.shrinkwrap.api.ShrinkWrap;
-import org.jboss.shrinkwrap.api.asset.EmptyAsset;
-import org.jboss.shrinkwrap.api.spec.JavaArchive;
-import org.junit.runner.RunWith;*/
-
 import static org.junit.Assert.*;
 
 /**
  * Created by myutman on 9/27/17.
  */
-//@RunWith(Arquillian.class)
 public class HashTableTest {
 
     HashTable hs = new HashTable();
 
+    /**
+     * Putting different values and checking size.
+     *
+     * @throws Exception
+     */
     @org.junit.Test
     public void size() throws Exception {
         assertEquals(hs.size(), 0);
@@ -36,6 +33,11 @@ public class HashTableTest {
         assertEquals(hs.size(), 0);
     }
 
+    /**
+     * Putting and erasing same value and checking for containing in HashTable.
+     *
+     * @throws Exception
+     */
     @org.junit.Test
     public void contains() throws Exception {
         hs.put("Out", "there");
@@ -44,6 +46,11 @@ public class HashTableTest {
         assertEquals(hs.contains("Out"), false);
     }
 
+    /**
+     * Putting different values and checking the value by key.
+     *
+     * @throws Exception
+     */
     @org.junit.Test
     public void get() throws Exception {
         hs.put("Out", "there");
@@ -54,6 +61,11 @@ public class HashTableTest {
         hs.clear();
     }
 
+    /**
+     * Putting different values and checking previous values by keys.
+     *
+     * @throws Exception
+     */
     @org.junit.Test
     public void put() throws Exception {
         assertEquals(hs.put("aba", "caba"), null);
@@ -66,6 +78,12 @@ public class HashTableTest {
         hs.clear();
     }
 
+
+    /**
+     * Putting values then erasing these values and checking previous values by keys.
+     *
+     * @throws Exception
+     */
     @org.junit.Test
     public void remove() throws Exception {
         hs.put("Out", "there");
@@ -75,6 +93,11 @@ public class HashTableTest {
         hs.clear();
     }
 
+    /**
+     * Putting values and checking what they are and then clearing HashTable and checking that there are these values in HashTable no more.
+     *
+     * @throws Exception
+     */
     @org.junit.Test
     public void clear() throws Exception {
         hs.put("aba", "caba");
@@ -91,12 +114,5 @@ public class HashTableTest {
         assertEquals(hs.get("Out"), null);
         assertEquals(hs.get("in the"), null);
     }
-
-    /*@Deployment
-    public static JavaArchive createDeployment() {
-        return ShrinkWrap.create(JavaArchive.class)
-                .addClass(HashTable.class)
-                .addAsManifestResource(EmptyAsset.INSTANCE, "beans.xml");
-    }*/
 
 }
