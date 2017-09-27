@@ -38,6 +38,10 @@ public class HashTableTest {
 
     @org.junit.Test
     public void contains() throws Exception {
+        hs.put("Out", "there");
+        assertEquals(hs.contains("Out"), true);
+        hs.clear();
+        assertEquals(hs.contains("Out"), false);
     }
 
     @org.junit.Test
