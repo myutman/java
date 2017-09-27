@@ -19,7 +19,7 @@ public class MatrixTest {
     }
 
     /**
-     * Test output.
+     * Outputs matrix and checks whether output is the same as matrix.
      *
      * @throws Exception
      */
@@ -33,7 +33,7 @@ public class MatrixTest {
     }
 
     /**
-     * Test metod sortByFirst().
+     * Calls method sortByFirst() and then outputs matrix and checks whether output is the same as it should be.
      *
      * @throws Exception
      */
@@ -49,7 +49,7 @@ public class MatrixTest {
 
 
     /**
-     * Test metod outputSpiral().
+     * Calls method outputSpiral() ans checks whether the output is correct.
      *
      * @throws Exception
      */
