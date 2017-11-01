@@ -1,5 +1,8 @@
 package com.github.myutman.java;
 
+import org.junit.After;
+import org.junit.Test;
+
 import static org.junit.Assert.*;
 
 /**
@@ -9,110 +12,147 @@ public class HashTableTest {
 
     HashTable hs = new HashTable();
 
+    @After
+    public void doAfter(){
+        hs.clear();
+    }
+
     /**
      * Putting different values and checking size.
-     *
-     * @throws Exception
      */
-    @org.junit.Test
-    public void size() throws Exception {
-        assertEquals(hs.size(), 0);
+    @Test
+    public void testSizeAfterAddingElementsAndClearing() throws Exception {
+        assertEquals(0, hs.size());
         hs.put("aba", "caba");
-        assertEquals(hs.size(), 1);
+        assertEquals(1, hs.size());
         hs.put("aba", "daba");
-        assertEquals(hs.size(), 1);
+        assertEquals(1, hs.size());
         hs.put("aba", "caba");
-        assertEquals(hs.size(), 1);
+        assertEquals(1, hs.size());
         hs.put("daba", "Hey, you!");
-        assertEquals(hs.size(), 2);
+        assertEquals(2, hs.size());
         hs.put("Out", "there");
-        assertEquals(hs.size(), 3);
+        assertEquals(3, hs.size());
         hs.put("in the", "cold!");
-        assertEquals(hs.size(), 4);
+        assertEquals(4, hs.size());
         hs.clear();
-        assertEquals(hs.size(), 0);
+        assertEquals(0, hs.size());
     }
 
     /**
-     * Putting and erasing same value and checking for containing in HashTable.
-     *
-     * @throws Exception
+     * Crashes if contains works incorrectly with element from HashTable.
      */
-    @org.junit.Test
-    public void contains() throws Exception {
+    @Test
+    public void testContainsValueExist() throws Exception {
         hs.put("Out", "there");
-        assertEquals(hs.contains("Out"), true);
-        hs.clear();
-        assertEquals(hs.contains("Out"), false);
+        assertTrue(hs.contains("Out"));
     }
 
     /**
-     * Putting different values and checking the value by key.
-     *
-     * @throws Exception
+     * Crashes if contains works incorrectly with no such element in HashTable.
      */
-    @org.junit.Test
-    public void get() throws Exception {
+    @Test
+    public void testContainsValueNotExist() throws Exception {
         hs.put("Out", "there");
-        hs.put("in the", "cold!");
-        hs.size();
-        assertEquals(hs.get("int the"), null);
-        assertEquals(hs.get("in the"), "cold!");
-        hs.clear();
+        assertFalse(hs.contains("out"));
     }
 
     /**
-     * Putting different values and checking previous values by keys.
-     *
-     * @throws Exception
+     * Crashes if contains works incorrectly with cleared HashTable.
      */
-    @org.junit.Test
-    public void put() throws Exception {
-        assertEquals(hs.put("aba", "caba"), null);
-        assertEquals(hs.put("aba", "daba"), "caba");
-        assertEquals(hs.put("aba", "caba"), "daba");
-        assertEquals(hs.put("daba", "Hey, you!"), null);
-        assertEquals(hs.put("Out", "there"), null);
-        assertEquals(hs.put("in the", "cold!"), null);
-        assertEquals(hs.size(), 4);
+    @Test
+    public void testContainsValueCleared() throws Exception {
+        hs.put("Out", "there");
         hs.clear();
+        assertFalse(hs.contains("Out"));
     }
 
-
     /**
-     * Putting values then erasing these values and checking previous values by keys.
-     *
-     * @throws Exception
+     * Crashes if get works incorrectly with element from HashTable.
      */
-    @org.junit.Test
-    public void remove() throws Exception {
+    @Test
+    public void testGetValueExist() throws Exception {
         hs.put("Out", "there");
         hs.put("in the", "cold!");
-        assertEquals(hs.remove("out"), null);
+        assertEquals("cold!", hs.get("in the"));
+    }
+
+    /**
+     * Crashes if get works incorrectly with no such element in HashTable.
+     */
+    @Test
+    public void testGetValueNotExist() throws Exception {
+        hs.put("Out", "there");
+        hs.put("in the", "cold!");
+        assertNull(hs.get("int the"));
+    }
+
+    /**
+     * Crashes if get works incorrectly with cleared HashTable.
+     */
+    @Test
+    public void testGetValueCleared() throws Exception {
+        hs.put("Out", "there");
+        hs.put("in the", "cold!");
+        hs.clear();
+        assertNull(hs.get("in the"));
+    }
+
+    /**
+     * Crashes if put works incorrectly with no such element in HashTable.
+     */
+    @Test
+    public void testPutNotExisting() throws Exception {
+        assertNull(hs.put("aba", "caba"));
+    }
+
+    /**
+     * Crashes if put works incorrectly with element from HashTable.
+     */
+    @Test
+    public void testPutExisting() throws Exception {
+        hs.put("aba", "caba");
+        assertEquals("caba", hs.put("aba", "daba"));
+    }
+
+    /**
+     * Crashes if put works incorrectly with cleared HashTable.
+     */
+    @Test
+    public void testPutCleared() throws Exception {
+        hs.put("aba", "caba");
+        hs.clear();
+        assertNull(hs.put("aba", "daba"));
+    }
+
+    /**
+     * Crashes if remove works incorrectly with element from HashTable.
+     */
+    @Test
+    public void testRemoveExisting() throws Exception {
+        hs.put("Out", "there");
+        hs.put("in the", "cold!");
         assertEquals(hs.remove("Out"), "there");
-        hs.clear();
     }
 
     /**
-     * Putting values and checking what they are and then clearing HashTable and checking that there are these values in HashTable no more.
-     *
-     * @throws Exception
+     * Crashes if remove works incorrectly with no such element in HashTable.
      */
-    @org.junit.Test
-    public void clear() throws Exception {
-        hs.put("aba", "caba");
-        hs.put("daba", "Hey, you!");
+    @Test
+    public void testRemoveNotExisting() throws Exception {
         hs.put("Out", "there");
         hs.put("in the", "cold!");
-        assertEquals(hs.get("aba"), "caba");
-        assertEquals(hs.get("daba"), "Hey, you!");
-        assertEquals(hs.get("Out"), "there");
-        assertEquals(hs.get("in the"), "cold!");
-        hs.clear();
-        assertEquals(hs.get("aba"), null);
-        assertEquals(hs.get("daba"), null);
-        assertEquals(hs.get("Out"), null);
-        assertEquals(hs.get("in the"), null);
+        assertNull(hs.remove("out"));
     }
 
+    /**
+     * Crashes if remove works incorrectly with cleared HashTable.
+     */
+    @Test
+    public void testRemoveCleared() throws Exception {
+        hs.put("Out", "there");
+        hs.put("in the", "cold!");
+        hs.clear();
+        assertNull(hs.remove("Out"));
+    }
 }
