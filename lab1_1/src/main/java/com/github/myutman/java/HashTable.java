@@ -10,21 +10,21 @@ public class HashTable {
     /**
      * List of Pair of Strings wrapper.
      */
-    private class ListOfPairs{
-        List<Pair<String>> list;
+    private class ListOfPairs {
+        private List<Pair<String>> list;
 
         /**
          * Class constructor.
          */
-        ListOfPairs(){
-            list = new List<Pair<String>>();
+        public ListOfPairs() {
+            list = new List<>();
         }
     }
 
     private final int mod = (int) (1e6 + 7);
     private int size = 0;
     private ListOfPairs[] store = new ListOfPairs[mod];
-    private List<String> keyStore = new List<String>();
+    private List<String> keyStore = new List<>();
 
     /**
      * Class constructor. Creates Lists to store elements.
@@ -36,25 +36,29 @@ public class HashTable {
     }
 
     /**
-     * @return - size of HashTable
+     * Size of HashTable.
+     *
+     * @return size of HashTable
      */
     public int size() {
         return size;
     }
 
-    private List<Pair<String>> getBucket(String key){
+    private List<Pair<String>> getBucket(String key) {
         return store[(key.hashCode() % mod + mod) % mod].list;
     }
 
     /**
-     * @param key - String needed to be checked
-     * @return - true if HashTable contains String and false otherwise
+     * Checks whether given key is in HashTable.
+     *
+     * @param key String needed to be checked
+     * @return true if HashTable contains String and false otherwise
      */
     public boolean contains(String key) {
         List<Pair<String>> list = getBucket(key);
         if (list.getTail() != null) {
             for (Pair<String> pair : list) {
-                if (pair.getFirst() == key)
+                if (pair.getFirst().equals(key))
                     return true;
             }
         }
@@ -62,14 +66,14 @@ public class HashTable {
     }
 
     /**
-     * @param key - String to get value by
-     * @return - value by this key or null if it doesn't exist
+     * @param key String to get value by
+     * @return value by this key or null if it doesn't exist
      */
     public String get(String key) {
         List<Pair<String>> list = getBucket(key);
         if (list.getTail() != null) {
             for (Pair<String> pair : list) {
-                if (pair.getFirst() == key)
+                if (pair.getFirst().equals(key))
                     return pair.getSecond();
             }
         }
@@ -77,15 +81,15 @@ public class HashTable {
     }
 
     /**
-     * @param key - String to put value by
-     * @param value - String to be put
-     * @return - previous value by key or null if it doesn't exist
+     * @param key String to put value by
+     * @param value String to be put
+     * @return previous value by key or null if it doesn't exist
      */
     public String put(String key, String value) {
         List<Pair<String>> list = getBucket(key);
         if (list.getTail() != null) {
             for (Pair<String> pair : list) {
-                if (pair.getFirst() == key) {
+                if (pair.getFirst().equals(key)) {
                     String ans = pair.getSecond();
                     pair.setSecond(value);
                     return ans;
@@ -93,20 +97,20 @@ public class HashTable {
             }
         }
         size++;
-        list.add(new Pair(key, value));
+        list.add(new Pair<>(key, value));
         keyStore.add(key);
         return null;
     }
 
     /**
-     * @param key - String to remove value by
-     * @return - value by this key or null if it doesn't exist
+     * @param key String to remove value by
+     * @return value by this key or null if it doesn't exist
      */
     public String remove(String key) {
         List<Pair<String>> list = getBucket(key);
         if (list.getTail() != null) {
             for (List<Pair<String>>.Node node = list.getTail(); node != null; node = node.getNext()) {
-                if (node.getKey().getFirst() == key) {
+                if (node.getKey().getFirst().equals(key)) {
                     size--;
                     String ans = node.getKey().getSecond();
                     node.remove();
@@ -121,7 +125,7 @@ public class HashTable {
      * Removes all the values from the HashTable.
      */
     public void clear() {
-        for (String s: keyStore){
+        for (String s: keyStore) {
             getBucket(s).clear();
         }
         keyStore.clear();

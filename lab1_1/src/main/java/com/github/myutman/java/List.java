@@ -26,14 +26,14 @@ public class List<T> implements Iterable<T> {
         /**
          * Class constructor.
          *
-         * @param key - T stored in this node.
+         * @param key T stored in this node.
          */
         public Node(T key) {
             this.key = key;
         }
 
         public void remove() {
-            if (prev != null){
+            if (prev != null) {
                 prev.next = next;
             } else {
                 tail = next;
@@ -49,13 +49,13 @@ public class List<T> implements Iterable<T> {
     /**
      * Iterator for List Nodes.
      */
-    private class NodeIterator implements Iterator<T> {
+    public class NodeIterator implements Iterator<T> {
         private Node node;
 
         /**
          * Class constructor.
          */
-        NodeIterator(){
+        public NodeIterator() {
             this.node = tail;
         }
 
@@ -82,12 +82,12 @@ public class List<T> implements Iterable<T> {
     }
 
     /**
-     * @param key - value to be added to the head of List
+     * @param key value to be added to the head of List
      */
     public void add(T key) {
         size++;
         Node newNode = new Node(key);
-        if (tail == null){
+        if (tail == null) {
             head = tail = newNode;
         } else {
             head.next = newNode;
@@ -105,9 +105,9 @@ public class List<T> implements Iterable<T> {
     }
 
     /**
-     * @return - leftmost(tail) Node of the List.
+     * @return leftmost(tail) Node of the List.
      */
-    public Node getTail(){
+    public Node getTail() {
         return tail;
     }
 
