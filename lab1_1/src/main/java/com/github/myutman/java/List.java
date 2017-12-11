@@ -9,19 +9,17 @@ import java.util.Iterator;
  */
 public class List<T> implements Iterable<T> {
 
-    private Node head = null, tail = null;
+    private Node<T> head = null;
+    private Node<T> tail = null;
     private int size = 0;
 
     /**
      * List Node.
      */
-    public class Node {
+    private static class Node<T> {
         private T key = null;
-        private Node next = null;
-        private Node prev = null;
-
-        public Node getNext() { return next; }
-        public T getKey() { return key; }
+        private Node<T> next = null;
+        private Node<T> prev = null;
 
         /**
          * Class constructor.
@@ -31,26 +29,14 @@ public class List<T> implements Iterable<T> {
         public Node(T key) {
             this.key = key;
         }
-
-        public void remove() {
-            if (prev != null) {
-                prev.next = next;
-            } else {
-                tail = next;
-            }
-            if (next != null) {
-                next.prev = prev;
-            } else {
-                head = prev;
-            }
-        }
     }
 
     /**
      * Iterator for List Nodes.
      */
     public class NodeIterator implements Iterator<T> {
-        private Node node;
+        private Node<T> node;
+        private Node<T> last = null;
 
         /**
          * Class constructor.
@@ -70,6 +56,7 @@ public class List<T> implements Iterable<T> {
          * next from Iterator interface.
          */
         public T next() {
+            last = node;
             T key = node.key;
             node = node.next;
             return key;
@@ -78,7 +65,18 @@ public class List<T> implements Iterable<T> {
         /**
          * remove from Iterator interface.
          */
-        public void remove() { }
+        public void remove() {
+            if (last.prev != null) {
+                last.prev.next = last.next;
+            } else {
+                tail = last.next;
+            }
+            if (last.next != null) {
+                last.next.prev = last.prev;
+            } else {
+                head = last.prev;
+            }
+        }
     }
 
     /**
@@ -86,7 +84,7 @@ public class List<T> implements Iterable<T> {
      */
     public void add(T key) {
         size++;
-        Node newNode = new Node(key);
+        Node newNode = new Node<T>(key);
         if (tail == null) {
             head = tail = newNode;
         } else {
@@ -114,7 +112,7 @@ public class List<T> implements Iterable<T> {
     /**
      * iterator from Iterable interface.
      */
-    public Iterator<T> iterator() {
+    public NodeIterator iterator() {
         return new NodeIterator();
     }
 }

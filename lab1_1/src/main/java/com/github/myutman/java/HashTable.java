@@ -1,5 +1,7 @@
 package com.github.myutman.java;
 
+import java.io.ObjectInputStream;
+
 /**
  * Created by myutman on 9/9/17.
  *
@@ -108,14 +110,13 @@ public class HashTable {
      */
     public String remove(String key) {
         List<Pair<String>> list = getBucket(key);
-        if (list.getTail() != null) {
-            for (List<Pair<String>>.Node node = list.getTail(); node != null; node = node.getNext()) {
-                if (node.getKey().getFirst().equals(key)) {
-                    size--;
-                    String ans = node.getKey().getSecond();
-                    node.remove();
-                    return ans;
-                }
+        for (List.NodeIterator iterator = list.iterator(); iterator.hasNext(); ) {
+            Pair<String> pair = (Pair<String>) iterator.next();
+            if (pair.getFirst().equals(key)) {
+                size--;
+                String ans = pair.getSecond();
+                iterator.remove();
+                return ans;
             }
         }
         return null;
