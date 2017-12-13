@@ -43,7 +43,7 @@ public class InjectorTest {
     public void testMultipleCalls(){
         B.init();
         D obj = (D) Injector.initialize(D.class.getName(), Arrays.asList(new Class[]{A.class, B.class, D.class}));
-        assertEquals(B.ct, 1);
+        assertEquals(B.getCt(), 1);
     }
 
     @Test

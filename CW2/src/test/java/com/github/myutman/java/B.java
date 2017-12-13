@@ -7,7 +7,7 @@ public class B implements Interface1 {
 
     private static int ct = 0;
 
-    public B(){
+    public B() {
         count();
         System.out.println("Created B");
     }
@@ -16,7 +16,11 @@ public class B implements Interface1 {
         ct = 0;
     }
 
-    public static void count(){
+    public static void count() {
         ct++;
+    }
+
+    public static int getCt() {
+        return ct;
     }
 }
