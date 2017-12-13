@@ -5,7 +5,7 @@ package com.github.myutman.java;
  */
 public class B implements Interface1 {
 
-    static int ct = 0;
+    private static int ct = 0;
 
     public B(){
         count();
