@@ -9,6 +9,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.lang.reflect.TypeVariable;
+import java.sql.Ref;
 import java.util.ArrayList;
 
 /**
@@ -17,12 +18,14 @@ import java.util.ArrayList;
 public class Reflector {
 
     public static void main(String[] args) {
-        printStructure(ArrayList.class);
+        printStructure(Reflector.class);
     }
 
     public static void printStructure(Class<?> someClass) {
         try (PrintWriter out = new PrintWriter(new File(someClass.getSimpleName() + ".java"))) {
             out.println(Modifier.toString(someClass.getModifiers()) + " class " + someClass.getSimpleName() + " {");
+            someClass.getClasses();
+
             Field[] fields = someClass.getFields();
             for (Field field : fields) {
                 out.print("\t" + Modifier.toString(field.getModifiers()) + " " + field.getType().getSimpleName() + " " + field.getName());
