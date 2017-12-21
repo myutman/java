@@ -34,7 +34,7 @@ public class List<T> implements Iterable<T> {
     /**
      * Iterator for List Nodes.
      */
-    public class NodeIterator implements Iterator<T> {
+    private class NodeIterator implements Iterator<T> {
         private Node<T> node;
         private Node<T> last = null;
 
@@ -80,6 +80,7 @@ public class List<T> implements Iterable<T> {
     }
 
     /**
+     * Adds value to List.
      * @param key value to be added to the head of List
      */
     public void add(T key) {
@@ -103,16 +104,9 @@ public class List<T> implements Iterable<T> {
     }
 
     /**
-     * @return leftmost(tail) Node of the List.
-     */
-    public Node getTail() {
-        return tail;
-    }
-
-    /**
      * iterator from Iterable interface.
      */
-    public NodeIterator iterator() {
+    public Iterator<T> iterator() {
         return new NodeIterator();
     }
 }

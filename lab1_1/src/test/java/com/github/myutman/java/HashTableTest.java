@@ -10,7 +10,7 @@ import static org.junit.Assert.*;
  */
 public class HashTableTest {
 
-    HashTable hs = new HashTable();
+    private HashTable hs = new HashTable();
 
     @After
     public void doAfter(){

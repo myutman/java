@@ -16,7 +16,6 @@ public class Pair<T> {
 
     /**
      * Class constructor.
-     *
      * @param first first element
      * @param second second element
      */

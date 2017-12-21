@@ -1,6 +1,7 @@
 package com.github.myutman.java;
 
 import java.io.ObjectInputStream;
+import java.util.Iterator;
 
 /**
  * Created by myutman on 9/9/17.
@@ -39,7 +40,6 @@ public class HashTable {
 
     /**
      * Size of HashTable.
-     *
      * @return size of HashTable
      */
     public int size() {
@@ -52,50 +52,46 @@ public class HashTable {
 
     /**
      * Checks whether given key is in HashTable.
-     *
      * @param key String needed to be checked
      * @return true if HashTable contains String and false otherwise
      */
     public boolean contains(String key) {
         List<Pair<String>> list = getBucket(key);
-        if (list.getTail() != null) {
-            for (Pair<String> pair : list) {
-                if (pair.getFirst().equals(key))
-                    return true;
-            }
+        for (Pair<String> pair : list) {
+            if (pair.getFirst().equals(key))
+                return true;
         }
         return false;
     }
 
     /**
+     * Gets value from HashMap by key.
      * @param key String to get value by
      * @return value by this key or null if it doesn't exist
      */
     public String get(String key) {
         List<Pair<String>> list = getBucket(key);
-        if (list.getTail() != null) {
-            for (Pair<String> pair : list) {
-                if (pair.getFirst().equals(key))
-                    return pair.getSecond();
-            }
+        for (Pair<String> pair : list) {
+            if (pair.getFirst().equals(key))
+                return pair.getSecond();
+
         }
         return null;
     }
 
     /**
+     * Puts value to HashMap by key.
      * @param key String to put value by
      * @param value String to be put
      * @return previous value by key or null if it doesn't exist
      */
     public String put(String key, String value) {
         List<Pair<String>> list = getBucket(key);
-        if (list.getTail() != null) {
-            for (Pair<String> pair : list) {
-                if (pair.getFirst().equals(key)) {
-                    String ans = pair.getSecond();
-                    pair.setSecond(value);
-                    return ans;
-                }
+        for (Pair<String> pair : list) {
+            if (pair.getFirst().equals(key)) {
+                String ans = pair.getSecond();
+                pair.setSecond(value);
+                return ans;
             }
         }
         size++;
@@ -105,13 +101,14 @@ public class HashTable {
     }
 
     /**
+     * Removes value from HashMap by key.
      * @param key String to remove value by
      * @return value by this key or null if it doesn't exist
      */
     public String remove(String key) {
         List<Pair<String>> list = getBucket(key);
-        for (List.NodeIterator iterator = list.iterator(); iterator.hasNext(); ) {
-            Pair<String> pair = (Pair<String>) iterator.next();
+        for (Iterator<Pair<String>> iterator = list.iterator(); iterator.hasNext(); ) {
+            Pair<String> pair = iterator.next();
             if (pair.getFirst().equals(key)) {
                 size--;
                 String ans = pair.getSecond();
