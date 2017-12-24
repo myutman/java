@@ -1,3 +1,6 @@
+package com.github.myutman.java;
+
+import com.github.myutman.java.Matrix;
 import org.junit.After;
 import org.junit.Before;
 
@@ -20,8 +23,6 @@ public class MatrixTest {
 
     /**
      * Outputs matrix and checks whether output is the same as matrix.
-     *
-     * @throws Exception
      */
     @org.junit.Test
     public void output() throws Exception {
@@ -34,8 +35,6 @@ public class MatrixTest {
 
     /**
      * Calls method sortByFirst() and then outputs matrix and checks whether output is the same as it should be.
-     *
-     * @throws Exception
      */
     @org.junit.Test
     public void sortByFirst() throws Exception {
@@ -50,8 +49,6 @@ public class MatrixTest {
 
     /**
      * Calls method outputSpiral() ans checks whether the output is correct.
-     *
-     * @throws Exception
      */
     @org.junit.Test
     public void outputSpitral() throws Exception {
@@ -60,7 +57,7 @@ public class MatrixTest {
                                            {11, 12, 13, 14, 15},
                                            {16, 17, 18, 19, 20},
                                            {21, 22, 23, 24, 25}});
-        mt.outputSpitral();
+        mt.outputSpiral();
         assertEquals(output.toString(), "13 18 17 12 7 8 9 14 19 24 23 22 21 16 11 6 1 2 3 4 5 10 15 20 25 \n");
     }
 

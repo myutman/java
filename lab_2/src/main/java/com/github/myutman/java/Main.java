@@ -1,3 +1,5 @@
+package com.github.myutman.java;
+
 /**
  * Created by myutman on 9/27/17.
  */
@@ -9,6 +11,6 @@ public class Main {
         Matrix mt = new Matrix(a);
         mt.sortByFirst();
         mt.output();
-        mt.outputSpitral();
+        mt.outputSpiral();
     }
 }
