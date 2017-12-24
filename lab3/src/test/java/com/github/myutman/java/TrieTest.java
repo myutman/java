@@ -16,7 +16,7 @@ public class TrieTest {
      * Outputs Trie and checks output then reads this Trie adds some new Strings and checks output.
      */
     @Test
-    public void testSerialization() throws Exception{
+    public void testSerialization() throws Exception {
         Trie tr = new Trie();
         tr.add("abaca");
         tr.add("aba");
@@ -40,7 +40,7 @@ public class TrieTest {
      * Adds Strings to Trie and checks correctness of returning values of add and also checks size of Trie, Strings containing and Strings which start with prefix.
      */
     @Test
-    public void testAdd() throws Exception{
+    public void testAdd() throws Exception {
         Trie tr = new Trie();
         tr.add("abaca");
         tr.add("aba");
@@ -59,7 +59,7 @@ public class TrieTest {
      * Adds different Strings to Trie then checks contain then adds and removes some Strings and checks contain.
      */
     @Test
-    public void testContains() throws Exception{
+    public void testContains() throws Exception {
         Trie tr = new Trie();
         tr.add("abacaba");
         tr.add("abaca");
@@ -80,7 +80,7 @@ public class TrieTest {
      * Adds different Strings than checks correctness of returning values of remove and checks size of Trie and how many Strings start with prefix.
      */
     @Test
-    public void testRemove() throws Exception{
+    public void testRemove() throws Exception {
         Trie tr = new Trie();
         tr.add("abacaba");
         tr.add("abaca");
@@ -95,7 +95,7 @@ public class TrieTest {
      * Adds different Strings and checks how many Strings start with prefix then removes one String and checks how many Strings start with prefix.
      */
     @Test
-    public void testHowManyStartsWithPrefix() throws Exception{
+    public void testHowManyStartsWithPrefix() throws Exception {
         Trie tr = new Trie();
         tr.add("abacaba");
         tr.add("abaca");

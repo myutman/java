@@ -12,7 +12,7 @@ import java.util.Scanner;
  *
  * Serializable and deserializable trie.
  */
-public class Trie implements MySerializable{
+public class Trie implements MySerializable {
 
     private int size = 0;
     private Node root = new Node();
@@ -184,7 +184,7 @@ public class Trie implements MySerializable{
     /**
      * Node of Trie.
      */
-    private static class Node{
+    private static class Node {
         HashMap<Character, Node> to = new HashMap<Character, Node>();
         boolean term = false;
         int howMany = 0;
