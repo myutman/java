@@ -57,7 +57,8 @@ public class Matrix {
      */
     public void outputSpiral() {
         int n = data.length;
-        int cx = n/2, cy = n/2;
+        int cx = n / 2;
+        int cy = n / 2;
         System.out.printf("%d ", data[cx][cy]);
         for (int i = 1; i < n - 1; i += 2) {
             for (int j = 0; j < i; j++) {
