@@ -13,8 +13,6 @@ public class TrieTest {
     private final ByteArrayOutputStream output1 = new ByteArrayOutputStream();
 
     /**
-     * @throws Exception
-     *
      * Outputs Trie and checks output then reads this Trie adds some new Strings and checks output.
      */
     @Test
@@ -39,8 +37,6 @@ public class TrieTest {
     }
 
     /**
-     * @throws Exception
-     *
      * Adds Strings to Trie and checks correctness of returning values of add and also checks size of Trie, Strings containing and Strings which start with prefix.
      */
     @Test
@@ -49,19 +45,17 @@ public class TrieTest {
         tr.add("abaca");
         tr.add("aba");
         tr.add("abada");
-        assertEquals(tr.size(), 3);
-        assertEquals(tr.add("abada"), false);
-        assertEquals(tr.add("abc"), true);
-        assertEquals(tr.size(), 4);
-        assertEquals(tr.contains("abc"), true);
-        assertEquals(tr.contains("abac"), false);
-        assertEquals(tr.howManyStartsWithPrefix("ab"), 4);
-        assertEquals(tr.howManyStartsWithPrefix("aba"), 3);
+        assertEquals(3, tr.size());
+        assertFalse(tr.add("abada"));
+        assertTrue(tr.add("abc"));
+        assertEquals(4, tr.size());
+        assertTrue(tr.contains("abc"));
+        assertFalse(tr.contains("abac"));
+        assertEquals(4, tr.howManyStartsWithPrefix("ab"));
+        assertEquals(3, tr.howManyStartsWithPrefix("aba"));
     }
 
     /**
-     * @throws Exception
-     *
      * Adds different Strings to Trie then checks contain then adds and removes some Strings and checks contain.
      */
     @Test
@@ -70,21 +64,19 @@ public class TrieTest {
         tr.add("abacaba");
         tr.add("abaca");
         tr.add("aba");
-        assertEquals(tr.contains("abacaba"), true);
-        assertEquals(tr.contains("abacab"), false);
-        assertEquals(tr.contains("abaca"), true);
-        assertEquals(tr.contains("abac"), false);
-        assertEquals(tr.contains("aba"), true);
-        assertEquals(tr.contains("ab"), false);
+        assertTrue(tr.contains("abacaba"));
+        assertFalse(tr.contains("abacab"));
+        assertTrue(tr.contains("abaca"));
+        assertFalse(tr.contains("abac"));
+        assertTrue(tr.contains("aba"));
+        assertFalse(tr.contains("ab"));
         tr.add("abacab");
-        assertEquals(tr.contains("abacab"), true);
+        assertTrue(tr.contains("abacab"));
         tr.remove("abacaba");
-        assertEquals(tr.contains("abacaba"), false);
+        assertFalse(tr.contains("abacaba"));
     }
 
     /**
-     * @throws Exception
-     *
      * Adds different Strings than checks correctness of returning values of remove and checks size of Trie and how many Strings start with prefix.
      */
     @Test
@@ -93,15 +85,13 @@ public class TrieTest {
         tr.add("abacaba");
         tr.add("abaca");
         tr.add("aba");
-        assertEquals(tr.remove("abacaba"), true);
-        assertEquals(tr.remove("abacab"), false);
-        assertEquals(tr.size(), 2);
-        assertEquals(tr.howManyStartsWithPrefix("aba"), 2);
+        assertTrue(tr.remove("abacaba"));
+        assertFalse(tr.remove("abacab"));
+        assertEquals(2, tr.size());
+        assertEquals(2, tr.howManyStartsWithPrefix("aba"));
     }
 
     /**
-     * @throws Exception
-     *
      * Adds different Strings and checks how many Strings start with prefix then removes one String and checks how many Strings start with prefix.
      */
     @Test
@@ -113,23 +103,23 @@ public class TrieTest {
         tr.add("acaba");
         tr.add("acama");
         tr.add("acabra");
-        assertEquals(tr.howManyStartsWithPrefix("ab"), 3);
-        assertEquals(tr.howManyStartsWithPrefix("ac"), 3);
-        assertEquals(tr.howManyStartsWithPrefix("a"), 6);
-        assertEquals(tr.howManyStartsWithPrefix("abac"), 2);
-        assertEquals(tr.howManyStartsWithPrefix("abad"), 1);
-        assertEquals(tr.howManyStartsWithPrefix("aca"), 3);
-        assertEquals(tr.howManyStartsWithPrefix("acab"), 2);
-        assertEquals(tr.howManyStartsWithPrefix("acaba"), 1);
+        assertEquals(3, tr.howManyStartsWithPrefix("ab"));
+        assertEquals(3, tr.howManyStartsWithPrefix("ac"));
+        assertEquals(6, tr.howManyStartsWithPrefix("a"));
+        assertEquals(2, tr.howManyStartsWithPrefix("abac"));
+        assertEquals(1, tr.howManyStartsWithPrefix("abad"));
+        assertEquals(3, tr.howManyStartsWithPrefix("aca"));
+        assertEquals(2, tr.howManyStartsWithPrefix("acab"));
+        assertEquals(1, tr.howManyStartsWithPrefix("acaba"));
         tr.remove("acaba");
-        assertEquals(tr.howManyStartsWithPrefix("ab"), 3);
-        assertEquals(tr.howManyStartsWithPrefix("ac"), 2);
-        assertEquals(tr.howManyStartsWithPrefix("a"), 5);
-        assertEquals(tr.howManyStartsWithPrefix("abac"), 2);
-        assertEquals(tr.howManyStartsWithPrefix("abad"), 1);
-        assertEquals(tr.howManyStartsWithPrefix("aca"), 2);
-        assertEquals(tr.howManyStartsWithPrefix("acab"), 1);
-        assertEquals(tr.howManyStartsWithPrefix("acaba"), 0);
+        assertEquals(3, tr.howManyStartsWithPrefix("ab"));
+        assertEquals(2, tr.howManyStartsWithPrefix("ac"));
+        assertEquals(5, tr.howManyStartsWithPrefix("a"));
+        assertEquals(2, tr.howManyStartsWithPrefix("abac"));
+        assertEquals(1, tr.howManyStartsWithPrefix("abad"));
+        assertEquals(2, tr.howManyStartsWithPrefix("aca"));
+        assertEquals(1, tr.howManyStartsWithPrefix("acab"));
+        assertEquals(0, tr.howManyStartsWithPrefix("acaba"));
 
     }
 
