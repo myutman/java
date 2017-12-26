@@ -17,14 +17,14 @@ public class PredicateTest {
         flag = false;
     }
 
-    private Predicate p = new Predicate<Integer>() {
+    private Predicate<Integer> p = new Predicate<Integer>() {
         @Override
         public Boolean apply(Integer x) {
             return x * x <= 25;
         }
     };
 
-    private Predicate p1 = new Predicate<Integer>() {
+    private Predicate<Integer> p1 = new Predicate<Integer>() {
         @Override
         public Boolean apply(Integer x) {
             flag = true;

@@ -1,7 +1,5 @@
 package com.github.myutman.java;
 
-import com.sun.org.apache.xpath.internal.operations.Bool;
-
 /**
  * Created by myutman on 11/7/17.
  *
@@ -10,10 +8,11 @@ import com.sun.org.apache.xpath.internal.operations.Bool;
 public abstract class Predicate<T> extends Function1<T, Boolean> {
 
     /**
-     * @param other - another predicate
-     * @return - result of disjunction of two predicates
+     * Predicate which value is disjunction of values of this and given predicate.
+     * @param other another predicate
+     * @return result of disjunction of two predicates
      */
-    public Predicate or(final Predicate<? super T> other){
+    public Predicate<T> or(final Predicate<? super T> other) {
         return new Predicate<T>() {
             @Override
             public Boolean apply(T x) {
@@ -23,10 +22,11 @@ public abstract class Predicate<T> extends Function1<T, Boolean> {
     }
 
     /**
-     * @param other - another predicate
-     * @return - result of conjunction of two predicates
+     * Predicate which value is conjunction of values of this and given predicate.
+     * @param other another predicate
+     * @return result of conjunction of two predicates
      */
-    public Predicate and(final Predicate<? super T> other){
+    public Predicate<T> and(final Predicate<? super T> other) {
         return new Predicate<T>() {
             @Override
             public Boolean apply(T x) {
@@ -36,9 +36,10 @@ public abstract class Predicate<T> extends Function1<T, Boolean> {
     }
 
     /**
-     * @return - result of inversion of the predicate
+     * Predicate which value is inversion of this predicate.
+     * @return result of inversion of the predicate
      */
-    public Predicate not(){
+    public Predicate<T> not() {
         return new Predicate<T>() {
             @Override
             public Boolean apply(T x) {
@@ -49,8 +50,9 @@ public abstract class Predicate<T> extends Function1<T, Boolean> {
 
     /**
      * Predicate which is always true.
+     * @return true predicate
      */
-    public static <U> Predicate ALWAYS_TRUE(){
+    public static <U> Predicate<U> ALWAYS_TRUE() {
         return new Predicate<U>() {
             @Override
             public Boolean apply(U x) {
@@ -61,8 +63,9 @@ public abstract class Predicate<T> extends Function1<T, Boolean> {
 
     /**
      * Predicate which is always false.
+     * @return false predicate
      */
-    public static <U> Predicate ALWAYS_FALSE(){
+    public static <U> Predicate<U> ALWAYS_FALSE() {
         return new Predicate<U>() {
             @Override
             public Boolean apply(U x) {

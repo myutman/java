@@ -14,26 +14,26 @@ public class CollectionsTest {
 
     private ArrayList<Integer> arrayList;
 
-    private Function1 f1 = new Function1<Integer, Integer>() {
+    private Function1<Integer, Integer> f1 = new Function1<Integer, Integer>() {
         public Integer apply(Integer x) {
-            return x*x;
+            return x * x;
         }
     };
 
-    private Function2 f2 = new Function2<Integer, Integer, Integer>() {
+    private Function2<Integer, Integer, Integer> f2 = new Function2<Integer, Integer, Integer>() {
         @Override
         public Integer apply(Integer x, Integer y) {
             return x / y;
         }
     };
 
-    private Function2 f3 = new Function2<Integer, Integer, Integer>() {
+    private Function2<Integer, Integer, Integer> f3 = new Function2<Integer, Integer, Integer>() {
         public Integer apply(Integer x, Integer y) {
             return x + y;
         }
     };
 
-    private Predicate p = new Predicate<Integer>() {
+    private Predicate<Integer> p = new Predicate<Integer>() {
         @Override
         public Boolean apply(Integer x) {
             return x * x <= 25;

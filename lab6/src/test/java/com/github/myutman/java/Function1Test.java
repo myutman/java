@@ -9,15 +9,15 @@ import static org.junit.Assert.*;
  */
 public class Function1Test {
 
-    private Function1 f = new Function1<Integer, Integer>() {
+    private Function1<Integer, Integer> f = new Function1<Integer, Integer>() {
         public Integer apply(Integer x) {
-            return x*2;
+            return x * 2;
         }
     };
 
-    private Function1 f1 = new Function1<Integer, Integer>() {
+    private Function1<Integer, Integer> f1 = new Function1<Integer, Integer>() {
         public Integer apply(Integer x) {
-            return x*x;
+            return x * x;
         }
     };
 
