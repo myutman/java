@@ -16,7 +16,6 @@ public class DescendingTreapMyTreeSet<E> extends TreapMyTreeSet<E> {
      * Constructor of descending version of TreapMyTreeSet given as an argument.
      */
     public DescendingTreapMyTreeSet (TreapMyTreeSet<E> parent){
-        random = parent.random;
         root = parent.root;
         size = parent.size;
         comparator = parent.comparator;
