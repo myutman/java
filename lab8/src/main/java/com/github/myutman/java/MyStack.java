@@ -3,42 +3,51 @@ package com.github.myutman.java;
 import java.util.ArrayList;
 
 /**
+ * Created by myutman on 11/28/17.
+ *
  * Implementation of interface Stack with ArrayList.
  */
 public class MyStack<T> implements Stack<T>{
 
-    ArrayList<T> arrayList = new ArrayList<T>();
-    int ct = 0;
+    private ArrayList<T> arrayList = new ArrayList<>();
+    private int count = 0;
 
     @Override
     public void push(T element) {
-        if (arrayList.size() == ct){
+        if (element == null) {
+            throw new UnsupportedOperationException();
+        }
+        if (arrayList.size() == count) {
             arrayList.add(element);
-            ct++;
+            count++;
         } else {
-            arrayList.set(ct++, element);
+            arrayList.set(count++, element);
         }
     }
 
     @Override
     public void pop() {
-        if (ct > 0) ct--;
+        if (count > 0) {
+            count--;
+        }
     }
 
     @Override
     public T top() {
-        if (ct == 0)
+        if (count == 0) {
             return null;
-        return arrayList.get(ct - 1);
+        }
+        return arrayList.get(count - 1);
     }
 
     @Override
     public boolean empty() {
-        return ct == 0;
+        return count == 0;
     }
 
     @Override
     public void clear() {
-        ct = 0;
+        count = 0;
+        arrayList.clear();
     }
 }

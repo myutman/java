@@ -3,12 +3,10 @@ package com.github.myutman.java;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InOrder;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
 
 import java.util.ArrayList;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.*;
 
 /**
@@ -16,14 +14,15 @@ import static org.mockito.Mockito.*;
  */
 public class CalculatorTest {
 
+    private Stack<Integer> mockStack;
+
     @Before
     public void setup() {
-        MockitoAnnotations.initMocks(this);
+        mockStack = (Stack<Integer>) mock(Stack.class);
     }
 
     @Test
     public void testSimplestCalculation() throws Exception {
-        Stack mockStack = mock(Stack.class);
         when(mockStack.top()).thenReturn(-42);
 
         Calculator calc = new Calculator(mockStack);
@@ -38,7 +37,6 @@ public class CalculatorTest {
 
     @Test
     public void testSimpleCalculation() throws Exception {
-        Stack mockStack = mock(Stack.class);
         when(mockStack.top()).thenReturn(-13, -42, 546);
 
         Calculator calc = new Calculator(mockStack);
@@ -57,7 +55,6 @@ public class CalculatorTest {
 
     @Test
     public void testComplexCalculation() throws Exception {
-        Stack mockStack = mock(Stack.class);
         when(mockStack.top()).thenReturn(3,4, 2, -1, 1, -2, 3);
 
         Calculator calc = new Calculator(mockStack);

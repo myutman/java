@@ -10,7 +10,7 @@ import static org.junit.Assert.*;
  */
 public class MyStackTest {
 
-    MyStack<Integer> st;
+    private MyStack<Integer> st;
 
     @Before
     public void before(){
