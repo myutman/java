@@ -3,10 +3,16 @@ package com.github.myutman.java.term2;
 import java.util.function.Supplier;
 
 /**
- * Created by myutman on 2/24/18.
+ * Factory of lazy calculation objects. It can create simple lazy object and thread-safe lazy object.
  */
 public class LazyFactory {
 
+    /**
+     * @param givenSupplier given supplier
+     * @param <T> return type
+     * @return value of calculation
+     * Creates new lazy calculation object.
+     */
     public static <T> Lazy<T> createSimpleLazy(Supplier<T> givenSupplier) {
         return new Lazy<T>() {
 
@@ -24,20 +30,24 @@ public class LazyFactory {
         };
     }
 
-    public static <T> Lazy<T> createParallelLazy(Supplier<T> givenSupplier) {
+
+    /**
+     * @param givenSupplier given supplier
+     * @param <T> return type
+     * @return value of calculation
+     * Creates new thread safe lazy calculation object.
+     */
+    public static <T> Lazy<T> createThreadSafeLazy(Supplier<T> givenSupplier) {
         return new Lazy<T>() {
 
             boolean calc = false;
             private T result;
 
             @Override
-            public T get() {
-                synchronized (this) {
-                    if (!calc) {
-                        System.out.println("initialized");
-                        calc = true;
-                        result = givenSupplier.get();
-                    }
+            public synchronized T get() {
+                if (!calc) {
+                    calc = true;
+                    result = givenSupplier.get();
                 }
                 return result;
             }
