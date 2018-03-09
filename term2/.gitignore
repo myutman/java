@@ -1,5 +1,9 @@
-**/build/**
-**/target/**
-**/.idea/**
+*.iml
 **/.gradle/**
-**/out/**
+**/local.properties/**
+**/.idea/**
+**/build/**
+**/captures
+.externalNativeBuild
+**/target/**
+**/pics/**
