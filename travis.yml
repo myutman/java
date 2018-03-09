@@ -1,8 +1,0 @@
-os:
-  - linux
-language:
-  - java
-install:
-  - sudo apt-get install gradle
-script:
-  - ./term2/lab1/gradlew build
