@@ -4,8 +4,4 @@ jdk:
 os:
   - linux
 script:
-  - cd term2/lab1/
-  - gradle build
-  - cd ../term2/lab2/
-  - gradle build
-  - cd ../..
+  - build.sh
