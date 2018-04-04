@@ -16,14 +16,14 @@ public class LazyFactory {
     public static <T> Lazy<T> createSimpleLazy(Supplier<T> givenSupplier) {
         return new Lazy<T>() {
 
-            boolean calc = false;
+            private Supplier<T> supplier = givenSupplier;
             private T result;
 
             @Override
             public T get() {
-                if (!calc) {
-                    calc = true;
-                    result = givenSupplier.get();
+                if (supplier != null) {
+                    result = supplier.get();
+                    supplier = null;
                 }
                 return result;
             }
@@ -40,14 +40,18 @@ public class LazyFactory {
     public static <T> Lazy<T> createThreadSafeLazy(Supplier<T> givenSupplier) {
         return new Lazy<T>() {
 
-            boolean calc = false;
+            private Supplier<T> supplier = givenSupplier;
             private T result;
 
             @Override
-            public synchronized T get() {
-                if (!calc) {
-                    calc = true;
-                    result = givenSupplier.get();
+            public T get() {
+                if (supplier != null) {
+                    synchronized (this) {
+                        if (supplier != null) {
+                            result = supplier.get();
+                            supplier = null;
+                        }
+                    }
                 }
                 return result;
             }

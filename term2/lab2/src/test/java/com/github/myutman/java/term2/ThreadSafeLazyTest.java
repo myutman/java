@@ -29,8 +29,16 @@ public class ThreadSafeLazyTest {
             ct++;
             return "hi";
         });
-        for (int i = 0; i < 10000; i++) {
-            new Thread(() -> { lazy.get(); }).start();
+        int n = 10000;
+        Thread[] threads = new Thread[n];
+        for (int i = 0; i < n; i++) {
+            threads[i] = new Thread(lazy::get);
+            threads[i].start();
+        }
+        for (int i = 0; i < n; i++) {
+            try {
+                threads[i].join();
+            } catch (InterruptedException ignored) { }
         }
         assertEquals(1, ct);
     }
