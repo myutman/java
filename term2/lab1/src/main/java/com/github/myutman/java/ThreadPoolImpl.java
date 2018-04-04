@@ -59,6 +59,11 @@ public class ThreadPoolImpl {
         for (int i = 0; i < n; i++) {
             pool[i].interrupt();
         }
+        for (int i = 0; i < n; i++) {
+            try {
+                pool[i].join();
+            } catch (InterruptedException ignored) { }
+        }
     }
 
     /**

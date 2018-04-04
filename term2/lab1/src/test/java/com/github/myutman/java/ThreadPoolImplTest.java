@@ -9,16 +9,19 @@ import static org.junit.Assert.*;
 
 public class ThreadPoolImplTest {
 
-    class Helper {
+    private class Helper {
         private int ct;
     }
 
+    private final Object otherMonitor = new Object();
+    private boolean flag;
     private final Helper monitor = new Helper();
     private final int n = 10;
     private ThreadPoolImpl pool;
 
     @Before
     public void before() {
+        flag = false;
         monitor.ct = 0;
         pool = new ThreadPoolImpl(n);
     }
@@ -26,50 +29,45 @@ public class ThreadPoolImplTest {
     @Test
     public void checkAllThreadsStarted() {
         for (int i = 0; i < n; i++) {
-            pool.add(pool.new LightFutureImpl<Integer>(new Supplier<Integer>() {
-                @Override
-                public Integer get() {
-                    synchronized (monitor) {
+            pool.add(pool.new LightFutureImpl<>(() -> {
+                synchronized (monitor) {
+                    monitor.ct++;
+                    monitor.notify();
+                }
+                synchronized (otherMonitor) {
+                    while (!flag) {
                         try {
-                            monitor.wait();
-                            monitor.ct++;
+                            otherMonitor.wait();
                         } catch (InterruptedException e) {
-                            return 0;
+                            break;
                         }
                     }
-                    return 0;
                 }
+                return 0;
             }));
         }
-        try {
-            Thread.sleep(100);
-        } catch (InterruptedException e) {
-            System.err.println("Interrupted.");
-        }
         synchronized (monitor) {
-            monitor.notifyAll();
-        }
-        try {
-            Thread.sleep(100);
-        } catch (InterruptedException e) {
-            System.err.println("Interrupted.");
-        }
-        pool.shutdown();
-        synchronized (monitor) {
+            while (monitor.ct < n) {
+                try {
+                    monitor.wait();
+                } catch (InterruptedException e) {
+                    break;
+                }
+            }
             assertEquals(n, monitor.ct);
         }
+        synchronized (otherMonitor) {
+            flag = true;
+            otherMonitor.notifyAll();
+        }
+        pool.shutdown();
     }
 
     @Test
-    public void checkCorrectlnessOfExecution() throws LightExecutionException {
+    public void checkCorrectnessOfExecution() throws LightExecutionException {
         int a = 3, b = 5;
         ThreadPoolImpl.LightFutureImpl<Integer> lightFuture = pool.new LightFutureImpl<>(() -> a + b);
         pool.add(lightFuture);
-        try {
-            Thread.sleep(100);
-        } catch (InterruptedException e) {
-            System.err.println("Interrupted.");
-        }
         pool.shutdown();
         assertTrue(lightFuture.isReady());
         assertEquals(8, (int) lightFuture.get());
@@ -78,11 +76,8 @@ public class ThreadPoolImplTest {
     @Test
     public void checkRightException() {
         try {
-            pool.new LightFutureImpl<Integer>(new Supplier<Integer>() {
-                @Override
-                public Integer get() {
-                    throw new RuntimeException();
-                }
+            pool.new LightFutureImpl<>(() -> {
+                throw new RuntimeException();
             }).get();
         } catch (LightExecutionException e) {
             System.err.println("Okay.");
@@ -104,11 +99,6 @@ public class ThreadPoolImplTest {
             }
             return x * x;
         });
-        try {
-            Thread.sleep(100);
-        } catch (InterruptedException e) {
-            System.err.println("Interrupted.");
-        }
         pool.shutdown();
         synchronized (monitor) {
             assertEquals(3, monitor.ct);
@@ -136,11 +126,6 @@ public class ThreadPoolImplTest {
             }
             return x * x * x;
         });
-        try {
-            Thread.sleep(100);
-        } catch (InterruptedException e) {
-            System.err.println("Interrupted.");
-        }
         pool.shutdown();
         synchronized (monitor) {
             assertEquals(6, monitor.ct);
@@ -151,44 +136,41 @@ public class ThreadPoolImplTest {
     public void checkNotBlocking() {
         ThreadPoolImpl.LightFutureImpl<Integer> lightFuture = pool.new LightFutureImpl<>(() -> 7);
         lightFuture.thenApply((x) -> x * x);
-        try {
-            Thread.sleep(100);
-        } catch (InterruptedException e) {
-            System.err.println("Interrupted.");
-        }
         for (int i = 0; i < n; i++) {
-            pool.add(pool.new LightFutureImpl<Integer>(new Supplier<Integer>() {
-                @Override
-                public Integer get() {
-                    synchronized (monitor) {
+            pool.add(pool.new LightFutureImpl<>(() -> {
+                synchronized (monitor) {
+                    monitor.ct++;
+                    monitor.notify();
+                }
+                synchronized (otherMonitor) {
+                    while (!flag) {
                         try {
-                            monitor.wait();
-                            monitor.ct++;
+                            otherMonitor.wait();
                         } catch (InterruptedException e) {
-                            return 0;
+                            break;
                         }
                     }
-                    return 0;
                 }
+                return 0;
             }));
         }
-        try {
-            Thread.sleep(100);
-        } catch (InterruptedException e) {
-            System.err.println("Interrupted.");
-        }
         synchronized (monitor) {
-            monitor.notifyAll();
-        }
-        try {
-            Thread.sleep(100);
-        } catch (InterruptedException e) {
-            System.err.println("Interrupted.");
-        }
-        pool.shutdown();
-        synchronized (monitor) {
+            while (monitor.ct < n) {
+                try {
+                    monitor.wait();
+                } catch (InterruptedException e) {
+                    break;
+                }
+            }
             assertEquals(n, monitor.ct);
         }
+        synchronized (otherMonitor) {
+            flag = true;
+            otherMonitor.notifyAll();
+        }
+        pool.add(lightFuture);
+        pool.shutdown();
+
     }
 
     @Test
@@ -196,11 +178,6 @@ public class ThreadPoolImplTest {
         ThreadPoolImpl.LightFutureImpl<Integer> lightFuture = pool.new LightFutureImpl<>(() -> 7);
         pool.add(lightFuture);
         ThreadPoolImpl.LightFutureImpl<Integer> lightFuture1 = lightFuture.thenApply((x) -> x * x);
-        try {
-            Thread.sleep(100);
-        } catch (InterruptedException e) {
-            System.err.println("Interrupted.");
-        }
         pool.shutdown();
         assertEquals(49, (int) lightFuture1.get());
     }
@@ -217,11 +194,6 @@ public class ThreadPoolImplTest {
                 }
                 return x * x;
             });
-        }
-        try {
-            Thread.sleep(100);
-        } catch (InterruptedException e) {
-            System.err.println("Interrupted.");
         }
         pool.shutdown();
         synchronized (monitor) {
