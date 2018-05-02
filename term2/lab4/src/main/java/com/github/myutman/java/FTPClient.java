@@ -3,6 +3,7 @@ package com.github.myutman.java;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
+import javax.swing.plaf.synth.SynthDesktopIconUI;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -24,15 +25,16 @@ public class FTPClient {
         while ("list".equals(command) || "get".equals(command)) {
             path = scanner.next();
 
-            try (Socket socket = new Socket("192.168.0.48", 6666)) {
-                try (DataInputStream inputStream = new DataInputStream(socket.getInputStream());
-                     DataOutputStream outputStream = new DataOutputStream(socket.getOutputStream())) {
-                    Map<String, Object> outMap = new HashMap<>();
-                    outMap.put("type", "list".equals(command) ? 1 : 2);
-                    outMap.put("path", path);
-                    outputStream.writeUTF(new Gson().toJson(outMap, GSON_MAP_TYPE));
-                    System.out.println(inputStream.readUTF());
-                }
+            try (Socket socket = new Socket("192.168.0.48", 6666);
+                 DataInputStream inputStream = new DataInputStream(socket.getInputStream());
+                 DataOutputStream outputStream = new DataOutputStream(socket.getOutputStream())) {
+                Map<String, Object> outMap = new HashMap<>();
+                outMap.put("type", "list".equals(command) ? 1 : 2);
+                outMap.put("path", path);
+                String data = new Gson().toJson(outMap, GSON_MAP_TYPE);
+                System.err.println(data);
+                outputStream.writeUTF(data);
+                System.out.println(inputStream.readUTF());
             } catch (IOException e) {
                 e.printStackTrace();
             }
