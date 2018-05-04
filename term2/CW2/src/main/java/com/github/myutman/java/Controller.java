@@ -1,7 +1,6 @@
 package com.github.myutman.java;
 
 import javafx.application.Platform;
-import sun.nio.ch.ThreadPool;
 
 import java.util.ArrayList;
 import java.util.Random;
@@ -18,7 +17,6 @@ public class Controller {
     private int n;
     private int numberOpened;
     private int curI, curJ;
-    private int lastI, lastJ;
 
     /**
      * Class constructor.
@@ -95,6 +93,7 @@ public class Controller {
             for (int j = 0; j < n; j++) {
                 int pos = random.nextInt(arrayList.size());
                 field[i][j] = arrayList.get(pos);
+                opened[i][j] = false;
                 arrayList.remove(pos);
             }
         }
