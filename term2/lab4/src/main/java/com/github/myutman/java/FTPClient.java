@@ -48,7 +48,7 @@ public class FTPClient {
      * @param path path to the file
      * @return new file that is copy of requested
      */
-    public static File get(Socket socket, String path) {
+    public static boolean get(Socket socket, String path, String destination) {
         try (DataInputStream inputStream = new DataInputStream(socket.getInputStream());
              DataOutputStream outputStream = new DataOutputStream(socket.getOutputStream())) {
             //Output
@@ -61,10 +61,9 @@ public class FTPClient {
             //Input
             long size = Long.parseLong(inputStream.readUTF());
             if (size == 0) {
-                return null;
+                return false;
             }
-            File outputFile = new File("." + File.separator + path);
-            outputFile.getParentFile().mkdirs();
+            File outputFile = new File(destination);
             try (FileOutputStream fileOutputStream = new FileOutputStream(outputFile)) {
                 byte[] buffer = new byte[1024];
                 while (size > 0) {
@@ -73,9 +72,9 @@ public class FTPClient {
                     size -= sz;
                 }
             }
-            return outputFile;
+            return true;
         } catch (IOException e) {
-            return null;
+            return false;
         }
     }
 
@@ -108,12 +107,14 @@ public class FTPClient {
                     }
                     System.out.println();
                 } else if ("get".equals(command)) {
-                   File file = get(socket, path);
-                   if (file != null) {
-                       System.out.println(file.getAbsolutePath());
-                   } else {
-                       System.out.println("null");
-                   }
+                    File file = new File("." + File.separator + path);
+                    file.getParentFile().mkdirs();
+                    get(socket, path, file.getCanonicalPath());
+                    if (file != null) {
+                        System.out.println(file.getCanonicalPath());
+                    } else {
+                        System.out.println("null");
+                    }
                 } else {
                     System.err.println("Incorrect command.");
                 }
