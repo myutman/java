@@ -4,4 +4,4 @@ jdk:
 os:
   - linux
 script:
-- bash build.sh
+  - bash build.sh
