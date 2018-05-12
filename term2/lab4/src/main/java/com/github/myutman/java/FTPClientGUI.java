@@ -6,10 +6,11 @@ import javafx.collections.ObservableList;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.text.Font;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.Stage;
-import oracle.jrockit.jfr.jdkevents.ThrowableTracer;
 
 import java.io.File;
 import java.io.IOException;
@@ -17,78 +18,91 @@ import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.Map;
 
 public class FTPClientGUI extends Application {
 
-    private Label label;
     private String ipValue;
     private int portNum;
-    private String current;
-    private  ObservableList observableList;
+    private ObservableList<String> observableList;
     private Stage primaryStage;
+    private String current;
 
-    public void downloadFile(String name) {
+    private void downloadFile(String src, String name) {
         DirectoryChooser chooser = new DirectoryChooser();
         chooser.setTitle("JavaFX Projects");
-        File defaultDirectory = new File(".");
+        File defaultDirectory = new File(current);
         chooser.setInitialDirectory(defaultDirectory);
         File selectedDirectory = chooser.showDialog(primaryStage);
-        Dialog dialog = new Dialog();
-        try (Socket socket = new Socket(ipValue, portNum);) {
-            String path = selectedDirectory.getCanonicalPath();
-            FTPClient.get(socket, current + File.separator + name,  path + File.separator + name);
-        } catch (UnknownHostException e) {
-            observableList.add("Uknown host");
+        String path = null;
+        try {
+            path = selectedDirectory.getCanonicalPath();
+            current = path;
+        } catch (NullPointerException ignored) {
+            return;
         } catch (IOException e) {
-            observableList.add("Error with connection");
+            observableList.add(0, "Error: Couldn't write to chosen directory");
         }
+        try (Socket socket = new Socket(ipValue, portNum);) {
+            FTPClient.get(socket, src + File.separator + name,path + File.separator + name);
+        } catch (IOException e) {
+            observableList.add(0, "Error: Couldn't download file");
+        }
+        observableList.add(0, "File " + name + " saved to " + path);
     }
 
-    public void updateList(){
-        label.setText(current);
-        try (Socket socket = new Socket(ipValue, portNum)) {
-            observableList.clear();
-            System.err.println(current);
-            ArrayList list = new ArrayList(FTPClient.list(socket, current));
-            Map<String, Object> smallMap = new HashMap<>();
-            smallMap.put("name", "..");
-            smallMap.put("is_dir", true);
-            list.add(smallMap);
-            list.sort(Comparator.comparing(object -> {
-                Map<String, Object> map = (Map) object;
-                return (String) map.get("name");
-            }));
-            for (Object object : list) {
-                Map<String, Object> map = (Map) object;
-                Button newButton = new Button();
-                observableList.add(newButton);
-                String name = (String) map.get("name");
-                newButton.setText(name);
-                if (!map.get("is_dir").equals(true)) {
-                    newButton.setStyle("-fx-base: #ff0000");
-                    newButton.setOnMouseClicked(event -> {
-                        downloadFile(name);
-                    });
-                } else {
-                    newButton.setOnMouseClicked(event -> {
-                        current = current + File.separator + name;
-                        File file = new File(current);
-                        try {
-                            current = file.getCanonicalPath();
-                        } catch (IOException e) {
-                            observableList.clear();
-                            observableList.add("No such file");
-                        }
-                        updateList();
-                    });
-                }
-            }
-        } catch (UnknownHostException e) {
-            observableList.add("Uknown host");
+    private ImageView newFolderIcon() {
+        ImageView icon = new ImageView("/folder.png");
+        icon.setPreserveRatio(true);
+        icon.setFitHeight(25);
+        return icon;
+    }
+
+    private ImageView newFileIcon() {
+        ImageView icon = new ImageView("/file.png");
+        icon.setPreserveRatio(true);
+        icon.setFitHeight(25);
+        return icon;
+    }
+
+    private void updateTree(TreeItem<Label> item){
+        ArrayList<Map<String, Object>> list = null;
+        TreeItem<Label> cur = item;
+        StringBuilder builder = new StringBuilder();
+        while (cur != null) {
+            builder.insert(0, File.separator + cur.getValue().getText());
+            cur = cur.getParent();
+        }
+        String path = builder.toString();
+        try {
+            path = new File(path).getCanonicalPath();
         } catch (IOException e) {
-            observableList.add("Error with connection");
+            observableList.add(0, "Error: " + e.getMessage());
+        }
+
+        try (Socket socket = new Socket(ipValue, portNum)) {
+            list = new ArrayList(FTPClient.list(socket, path));
+        } catch (UnknownHostException e) {
+            observableList.add(0, "Error: Unknown host");
+            return;
+        } catch (IOException e) {
+            observableList.add(0, "Error: No connection");
+            return;
+        }
+        list.sort(Comparator.comparing(map -> (String) map.get("name")));
+        item.getChildren().clear();
+        for (Map<String, Object> map : list) {
+            String name = (String) map.get("name");
+            TreeItem<Label> newItem = new TreeItem<>(new Label(name));
+            if (!map.get("is_dir").equals(true)) {
+                newItem.setGraphic(newFileIcon());
+                String finalPath = path;
+                newItem.getGraphic().setOnMouseClicked(event -> downloadFile(finalPath, name));
+            } else {
+                newItem.setGraphic(newFolderIcon());
+                newItem.getGraphic().setOnMouseClicked(event -> updateTree(newItem));
+            }
+            item.getChildren().add(newItem);
         }
     }
 
@@ -101,34 +115,36 @@ public class FTPClientGUI extends Application {
         primaryStage.setScene(scene);
         primaryStage.show();
         Button button = (Button) scene.lookup("#button");
-        ListView listView = (ListView) scene.lookup("#list");
+        ListView<String> listView = (ListView) scene.lookup("#list");
+        TreeView<Label> treeView = (TreeView) scene.lookup("#tree");
         TextField ip = (TextField) scene.lookup("#ip");
         TextField port = (TextField) scene.lookup("#port");
-        label = (Label) scene.lookup("#label");
         ip.setText("127.0.0.1");
         port.setText("6666");
-        final ArrayList arrayList = new ArrayList();
-        observableList = FXCollections.observableArrayList(arrayList);
-        listView.setItems(observableList);
+        observableList = listView.getItems();
+
         button.setOnMouseClicked(event -> {
             ipValue = ip.getText();
             String portValue = port.getText();
-            observableList.clear();
             if (!ipValue.matches("([0-1]?[0-9]?[0-9]|2[0-4][0-9]|25[0-5])\\.([0-1]?[0-9]?[0-9]|2[0-4][0-9]|25[0-5])\\.([0-1]?[0-9]?[0-9]|2[0-4][0-9]|25[0-5])\\.([0-1]?[0-9]?[0-9]|2[0-4][0-9]|25[0-5])")) {
-                observableList.add("Incorrect ip");
+                observableList.add(0, "Error: Incorrect ip");
                 return;
             }
             if (!portValue.matches("[0-9]?[0-9]?[0-9]?[0-9]?[0-9]")) {
-                observableList.add("Incorrect port");
+                observableList.add(0, "Error: Incorrect port");
                 return;
             }
             portNum = Integer.parseInt(portValue);
             if (portNum > 65535) {
-                observableList.add("Incorrect port");
+                observableList.add(0, "Error: Incorrect port");
                 return;
             }
             current = "/";
-            updateList();
+            TreeItem<Label> root = new TreeItem<Label>(new Label("/"));
+            root.setGraphic(newFolderIcon());
+            treeView.setRoot(root);
+            root.getValue().setFont(Font.font(20));
+            root.getGraphic().setOnMouseClicked(event1 -> updateTree(root));
         });
     }
 

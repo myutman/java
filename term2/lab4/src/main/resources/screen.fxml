@@ -6,12 +6,13 @@
 <?import javafx.scene.layout.AnchorPane?>
 
 <?import javafx.scene.control.Label?>
-<AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1" fx:controller="javafx.scene.layout.AnchorPane">
+<?import javafx.scene.control.TreeView?>
+<AnchorPane prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1" fx:controller="javafx.scene.layout.AnchorPane">
    <children>
-       <TextField fx:id="ip" layoutX="153.0" layoutY="74.0" prefHeight="26.0" prefWidth="192.0" promptText="ip-address" />
+       <TextField fx:id="ip" layoutX="50.0" layoutY="74.0" prefHeight="26.0" prefWidth="192.0" promptText="ip-address" />
        <TextField fx:id="port" layoutX="360.0" layoutY="74.0" prefHeight="26.0" prefWidth="88.0" promptText="port" />
        <Button fx:id="button" layoutX="472.0" layoutY="74.0" mnemonicParsing="false" text="Connect" />
-       <ListView fx:id="list" layoutX="153.0" layoutY="124.0" prefHeight="200.0" prefWidth="296.0" />
-       <Label fx:id="label" layoutX="153.0" layoutY="348" />
+       <TreeView fx:id="tree" layoutX="50.0" layoutY="124.0" prefHeight="350.0" prefWidth="700.0" />
+       <ListView fx:id="list" layoutX="50.0" layoutY="498.0" prefHeight="50.0" prefWidth="700.0" />
    </children>
 </AnchorPane>
