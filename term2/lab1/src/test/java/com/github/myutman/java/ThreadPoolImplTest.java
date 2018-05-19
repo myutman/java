@@ -78,7 +78,7 @@ public class ThreadPoolImplTest {
         try {
             pool.new LightFutureImpl<>(() -> {
                 throw new RuntimeException();
-            }).get();
+            }).calc();
         } catch (LightExecutionException e) {
             System.err.println("Okay.");
         }

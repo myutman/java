@@ -10,7 +10,7 @@ import java.util.function.Supplier;
  */
 public class ThreadPoolImpl {
 
-    private Thread[] pool;
+    private final Thread[] pool;
     private final Queue<LightFutureImpl<?>> queue = new ArrayDeque<>();
     private final int n;
 
@@ -36,12 +36,13 @@ public class ThreadPoolImpl {
                         break;
                     }
                     if (lightFuture != null) {
-                        if (lightFuture.hasParent() && !lightFuture.getParent().isReady()) {
+                        LightFuture<?> parent = lightFuture.getParent();
+                        if (parent != null && !parent.isReady()) {
                             add(lightFuture);
                             continue;
                         }
                         try {
-                            lightFuture.get();
+                            lightFuture.calc();
                         } catch (LightExecutionException e) {
                             System.err.println("Exception during execution of light future.");
                         }
@@ -108,14 +109,6 @@ public class ThreadPoolImpl {
         }
 
         /**
-         * Checks whether task has got a parent.
-         * @return true if this task has got a parent and false otherwise
-         */
-        public synchronized boolean hasParent() {
-            return parent != null;
-        }
-
-        /**
          * Returns tasks parent if it exists.
          * @return taks parent if it exists or null otherwise
          */
@@ -138,25 +131,28 @@ public class ThreadPoolImpl {
          */
         @Override
         public synchronized R get() throws LightExecutionException {
-            if (!ready) {
+            while (!ready) {
                 try {
-                    value = supplier.get();
-                } catch (Exception e) {
-                    throw new LightExecutionException();
-                }
-                ready = true;
-                synchronized (this) {
-                    this.notifyAll();
+                    wait();
+                } catch (InterruptedException e) {
+
                 }
             }
             return value;
         }
 
-        /**
-         * Makes new light future by applying given function to the result of this light future.
-         * @param function given function
-         * @return new light future
-         */
+        public void calc() throws LightExecutionException {
+            try {
+                value = supplier.get();
+            } catch (Exception e) {
+                throw new LightExecutionException();
+            }
+            ready = true;
+            synchronized (this) {
+                this.notifyAll();
+            }
+        }
+
         @Override
         public synchronized <S> LightFutureImpl<S> thenApply(Function<? super R, ? extends S> function) {
             LightFutureImpl<S> lightFuture = new LightFutureImpl<>(() -> function.apply(value), this);
