@@ -12,27 +12,41 @@ import java.net.URLClassLoader;
 import java.util.ArrayList;
 
 
-
+/**
+ * Console application class that executes all tests by given path.
+ */
 public class MyJUnit {
 
     static PrintStream out = System.out;
 
-    MyJUnit() {
-
-    }
-
+    /**
+     * Class constructor that takes output print stream to write to.
+     * @param out output print stream
+     */
     MyJUnit(PrintStream out) {
         MyJUnit.out = out;
     }
 
+    /**
+     * What to do if test is passed.
+     * @param name name of test
+     */
     public static void testPass(String name) {
         out.println("passed: " + name);
     }
 
+    /**
+     * What to do if test is failed.
+     * @param name name of test
+     */
     public static void testFail(String name) {
         out.println("failed: " + name);
     }
 
+    /**
+     * Runs all tests in given class.
+     * @param clazz given class
+     */
     public static void runTests(Class<?> clazz) {
         Object instance;
         try {
@@ -119,6 +133,10 @@ public class MyJUnit {
         }
     }
 
+    /**
+     * Console application class that executes all tests by given path.
+     * @param args [0] is given path
+     */
     public static void main(String[] args) {
         File dir = new File(args[0]);
         URL url;
