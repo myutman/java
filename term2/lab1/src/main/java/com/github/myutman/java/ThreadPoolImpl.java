@@ -1,5 +1,7 @@
 package com.github.myutman.java;
 
+import com.sun.istack.internal.Nullable;
+
 import java.util.ArrayDeque;
 import java.util.Queue;
 import java.util.function.Function;
@@ -115,6 +117,7 @@ public class ThreadPoolImpl {
          * Returns tasks parent if it exists.
          * @return taks parent if it exists or null otherwise
          */
+        @Nullable
         public synchronized LightFuture<?> getParent(){
             return parent;
         }
