@@ -41,11 +41,7 @@ public class ThreadPoolImpl {
                             add(lightFuture);
                             continue;
                         }
-                        try {
-                            lightFuture.calc();
-                        } catch (LightExecutionException e) {
-                            System.err.println("Exception during execution of light future.");
-                        }
+                        lightFuture.calc();
                     }
                 }
             });
@@ -67,11 +63,7 @@ public class ThreadPoolImpl {
         }
     }
 
-    /**
-     * Adds new task to the pool.
-     * @param lightFuture new task
-     */
-    public void add(LightFutureImpl<?> lightFuture) {
+    private void add(LightFutureImpl<?> lightFuture) {
         synchronized (queue) {
             queue.add(lightFuture);
             queue.notify();
@@ -79,10 +71,21 @@ public class ThreadPoolImpl {
     }
 
     /**
+     * Adds new task to the pool.
+     * @param supplier new task
+     */
+    public <S> LightFuture<S> add(Supplier<? extends S> supplier) {
+        LightFutureImpl<S> lightFuture = new LightFutureImpl<>(supplier);
+        add(lightFuture);
+        return lightFuture;
+    }
+
+    /**
      * Inner class, implementation of light future interface.
      */
     public class LightFutureImpl<R> implements LightFuture<R> {
 
+        private Throwable failed = null;
         private boolean ready = false;
         private R value = null;
         private final Supplier<? extends R> supplier;
@@ -130,34 +133,60 @@ public class ThreadPoolImpl {
          * @return calculated value
          */
         @Override
-        public synchronized R get() throws LightExecutionException {
+        public R get() throws LightExecutionException {
+            synchronized (this) {
+                if (failed != null) {
+                    LightExecutionException e = new LightExecutionException();
+                    e.addSuppressed(failed);
+                    throw e;
+                }
+            }
             while (!ready) {
-                try {
-                    wait();
-                } catch (InterruptedException e) {
-
+                synchronized (this) {
+                    try {
+                        wait();
+                    } catch (Throwable e) {
+                        failed = e;
+                    }
+                    if (failed != null) {
+                        LightExecutionException e = new LightExecutionException();
+                        e.addSuppressed(failed);
+                        throw e;
+                    }
                 }
             }
             return value;
         }
 
-        public void calc() throws LightExecutionException {
+        private void calc() {
             try {
-                value = supplier.get();
-            } catch (Exception e) {
-                throw new LightExecutionException();
+                R temp;
+                synchronized (supplier) {
+                    temp = supplier.get();
+                }
+                synchronized (this) {
+                    value = temp;
+                }
+            } catch (Throwable e) {
+                synchronized (this) {
+                    failed = e;
+                    notify();
+                    return;
+                }
             }
-            ready = true;
             synchronized (this) {
-                this.notifyAll();
+                ready = true;
+                notify();
             }
         }
 
         @Override
-        public synchronized <S> LightFutureImpl<S> thenApply(Function<? super R, ? extends S> function) {
-            LightFutureImpl<S> lightFuture = new LightFutureImpl<>(() -> function.apply(value), this);
-            add(lightFuture);
-            return lightFuture;
+        public <S> LightFutureImpl<S> thenApply(Function<? super R, ? extends S> function) {
+            synchronized (this) {
+                LightFutureImpl<S> lightFuture = new LightFutureImpl<>(() -> function.apply(value), this);
+                add(lightFuture);
+                return lightFuture;
+            }
         }
     }
 }

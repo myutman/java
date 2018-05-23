@@ -29,7 +29,7 @@ public class ThreadPoolImplTest {
     @Test
     public void checkAllThreadsStarted() {
         for (int i = 0; i < n; i++) {
-            pool.add(pool.new LightFutureImpl<>(() -> {
+            pool.add(() -> {
                 synchronized (monitor) {
                     monitor.ct++;
                     monitor.notify();
@@ -44,7 +44,7 @@ public class ThreadPoolImplTest {
                     }
                 }
                 return 0;
-            }));
+            });
         }
         synchronized (monitor) {
             while (monitor.ct < n) {
@@ -66,33 +66,33 @@ public class ThreadPoolImplTest {
     @Test
     public void checkCorrectnessOfExecution() throws LightExecutionException {
         int a = 3, b = 5;
-        ThreadPoolImpl.LightFutureImpl<Integer> lightFuture = pool.new LightFutureImpl<>(() -> a + b);
-        pool.add(lightFuture);
+        Supplier<Integer> supplier = () -> a + b;
+        pool.add(supplier);
         pool.shutdown();
-        assertTrue(lightFuture.isReady());
-        assertEquals(8, (int) lightFuture.get());
+        assertEquals(8, (int) supplier.get());
     }
 
     @Test
     public void checkRightException() {
+        LightFuture lightFuture = pool.add(() -> {
+            throw new RuntimeException();
+        });
+        pool.shutdown();
         try {
-            pool.new LightFutureImpl<>(() -> {
-                throw new RuntimeException();
-            }).calc();
-        } catch (LightExecutionException e) {
-            System.err.println("Okay.");
+            lightFuture.get();
+        } catch (LightExecutionException ignored) {
+
         }
     }
 
     @Test
     public void checkOneAfterAnother() {
-        ThreadPoolImpl.LightFutureImpl<Integer> lightFuture = pool.new LightFutureImpl<>(() -> {
+        LightFuture<Integer> lightFuture = pool.add(() -> {
             synchronized (monitor) {
                 monitor.ct = 1;
             }
             return 7;
         });
-        pool.add(lightFuture);
         lightFuture.thenApply((x) -> {
             synchronized (monitor) {
                 monitor.ct += 2;
@@ -107,13 +107,12 @@ public class ThreadPoolImplTest {
 
     @Test
     public void checkSeveralThenApply() {
-        ThreadPoolImpl.LightFutureImpl<Integer> lightFuture = pool.new LightFutureImpl<>(() -> {
+        LightFuture<Integer> lightFuture = pool.add(() -> {
             synchronized (monitor) {
                 monitor.ct = 1;
             }
             return 7;
         });
-        pool.add(lightFuture);
         lightFuture.thenApply((x) -> {
             synchronized (monitor) {
                 monitor.ct += 2;
@@ -134,13 +133,29 @@ public class ThreadPoolImplTest {
 
     @Test
     public void checkNotBlocking() {
-        ThreadPoolImpl.LightFutureImpl<Integer> lightFuture = pool.new LightFutureImpl<>(() -> 7);
+        synchronized (monitor) {
+            monitor.ct = 1;
+        }
+        LightFuture<Integer> lightFuture = pool.add(() -> {
+            synchronized (monitor) {
+                while (monitor.ct < n) {
+                    try {
+                        monitor.wait();
+                    } catch (InterruptedException e) {
+                        break;
+                    }
+                }
+            }
+            return 7;
+        });
         lightFuture.thenApply((x) -> x * x);
-        for (int i = 0; i < n; i++) {
-            pool.add(pool.new LightFutureImpl<>(() -> {
+        for (int i = 1; i < n; i++) {
+            pool.add(() -> {
                 synchronized (monitor) {
                     monitor.ct++;
-                    monitor.notify();
+                    if (monitor.ct == n) {
+                        monitor.notifyAll();
+                    }
                 }
                 synchronized (otherMonitor) {
                     while (!flag) {
@@ -152,7 +167,7 @@ public class ThreadPoolImplTest {
                     }
                 }
                 return 0;
-            }));
+            });
         }
         synchronized (monitor) {
             while (monitor.ct < n) {
@@ -168,16 +183,14 @@ public class ThreadPoolImplTest {
             flag = true;
             otherMonitor.notifyAll();
         }
-        pool.add(lightFuture);
         pool.shutdown();
 
     }
 
     @Test
     public void checkCorrectnessOfThenApply() throws LightExecutionException {
-        ThreadPoolImpl.LightFutureImpl<Integer> lightFuture = pool.new LightFutureImpl<>(() -> 7);
-        pool.add(lightFuture);
-        ThreadPoolImpl.LightFutureImpl<Integer> lightFuture1 = lightFuture.thenApply((x) -> x * x);
+        LightFuture<Integer> lightFuture = pool.add(() -> 7);
+        LightFuture<Integer> lightFuture1 = lightFuture.thenApply((x) -> x * x);
         pool.shutdown();
         assertEquals(49, (int) lightFuture1.get());
     }
@@ -186,9 +199,8 @@ public class ThreadPoolImplTest {
     public void main() {
         for (int i = 0; i < 2 * n; i++) {
             final Integer z = i + 1;
-            ThreadPoolImpl.LightFutureImpl<Integer> lf = pool.new LightFutureImpl<>(() -> z);
-            pool.add(lf);
-            lf.thenApply((x) -> {
+            LightFuture<Integer> lightFuture = pool.add(() -> z);
+            lightFuture.thenApply((x) -> {
                 synchronized (monitor) {
                     monitor.ct += x;
                 }
