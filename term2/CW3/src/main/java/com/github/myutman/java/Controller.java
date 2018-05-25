@@ -1,5 +1,7 @@
 package com.github.myutman.java;
 
+import java.net.Socket;
+
 /**
  * Simulates game between two players.
  */
@@ -11,6 +13,14 @@ public class Controller {
     private Player playerO;
     private boolean winX;
     private boolean winO;
+
+    public Socket getSocket() {
+        return null;
+    }
+
+    public void closeSocket() {
+
+    }
 
     /**
      * Class constructor.

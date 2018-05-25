@@ -1,52 +1,44 @@
 package com.github.myutman.java;
 
+import com.sun.istack.internal.NotNull;
+
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
 
-public class NetworkPlayer extends HumanPlayer {
+public class NetworkPlayer implements Player {
 
-    private Socket socket;
-    private DataInputStream dis;
-    private DataOutputStream dos;
+    //private Socket socket;
+    //private DataInputStream dis;
+    //private DataOutputStream dos;
 
-    public Socket getSocket() {
+    /*public Socket getSocket() {
         return socket;
-    }
+    }*/
 
-    /**
-     * Class constructor.
-     *
-     * @param side what figures does he play
-     */
-    public NetworkPlayer(int side, Socket socket) {
-        super(side);
-        this.socket = socket;
+    @Override
+    public void makeTurn(Controller controller) {
+        String request = null;
+        DataInputStream dis = null;
+        @NotNull Socket socket = controller.getSocket();
         try {
             dis = new DataInputStream(socket.getInputStream());
         } catch (IOException e) {
             e.printStackTrace();
         }
+        if (dis == null) return;
         try {
-            dos = new DataOutputStream(socket.getOutputStream());
+            request = dis.readUTF();
         } catch (IOException e) {
             e.printStackTrace();
         }
-    }
-
-    @Override
-    public void makeTurn(Controller controller) {
-        String ans = null;
-        try {
-            ans = dis.readUTF();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        if (ans != null) {
-            if ("finish".equals(ans)) {
-
-            }
-        }
+        if (request == null) return;
+        String coord[] = request.split(" ");
+        int x = Integer.parseInt(coord[0]);
+        int y = Integer.parseInt(coord[1]);
+        controller.set(x, y, controller.getTurn());
+        controller.changeTurn();
+        controller.closeSocket();
     }
 }

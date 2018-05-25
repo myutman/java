@@ -13,8 +13,23 @@ public class ServerController extends Controller {
     private DataInputStream dis;
     private DataOutputStream dos;
 
+    @Override
     public Socket getSocket() {
+        try {
+            socket = serverSocket.accept();
+        } catch (IOException e) {
+            System.err.println("No one's gonna play with you");
+        }
         return socket;
+    }
+
+    @Override
+    public void closeSocket() {
+        try {
+            socket.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public ServerController() {
@@ -23,12 +38,7 @@ public class ServerController extends Controller {
         } catch (IOException e) {
             System.err.println("Error creating server");
         }
-        try {
-            socket = serverSocket.accept();
-        } catch (IOException e) {
-            System.err.println("No one's gonna play with you");
-        }
-        try {
+        /*try {
             dis = new DataInputStream(socket.getInputStream());
         } catch (IOException e) {
             e.printStackTrace();
@@ -51,10 +61,25 @@ public class ServerController extends Controller {
                 int x = Integer.parseInt(coord[0]);
                 int y = Integer.parseInt(coord[1]);
                 set(x, y, getTurn());
-                changeTurn();
             }
         });
         thread.setDaemon(true);
-        thread.start();
+        thread.start();*/
+    }
+
+    @Override
+    public void set(int i, int j, int side) {
+        super.set(i, j, side);
+        try {
+            dos = new DataOutputStream(getSocket().getOutputStream());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        try {
+            dos.writeUTF(i + " " + j);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        closeSocket();
     }
 }

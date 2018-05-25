@@ -35,34 +35,36 @@ public class Main extends Application {
      *                     primary stages and will not be embedded in the browser.
      */
 
-    Controller game;
+    private Controller game;
+    private ImageView[][] field = new ImageView[3][3];
+    private Image imageX = new Image("/cross.png");
+    private Image imageO = new Image("/nolik.jpg");
+    private Image empty = new Image("/white.png");
+    private Image turn = new Image("/turn.jpg");
+    private Image win = new Image("/wins.jpeg");
+    private Image draw = new Image("/draw.png");
+    private ImageView who;
+    private ImageView what;
 
-    @Override
-    public void start(final Stage primaryStage) throws Exception {
-        AnchorPane mainMenu = FXMLLoader.load(getClass().getResource("/main_menu.fxml"));
-        AnchorPane gameField = FXMLLoader.load(getClass().getResource("/game_field.fxml"));
-        AnchorPane cpuSelect = FXMLLoader.load(getClass().getResource("/cpu_select.fxml"));
-        AnchorPane client = FXMLLoader.load(getClass().getResource("/client.fxml"));
-
-        final Scene mainMenuScene = new Scene(mainMenu);
-        final Scene gameFieldScene = new Scene(gameField);
-        final Scene cpuSelectScene = new Scene(cpuSelect);
-        final Scene clientScene = new Scene(client);
-        final ImageView who = (ImageView) gameField.lookup("#who");
-        final ImageView what = (ImageView) gameField.lookup("#what");
-
-        Image imageX = new Image("/cross.png");
-        Image imageO = new Image("/nolik.jpg");
-        Image empty = new Image("/white.png");
-        Image turn = new Image("/turn.jpg");
-        Image win = new Image("/wins.jpeg");
-        Image draw = new Image("/draw.png");
-        ImageView[][] field = new ImageView[3][3];
-
-
-        /// Game UI thread. Changes pictures.
-        new Thread(() -> {
-            while (true) {
+    private void initGame() {
+        for (int i = 0; i < 3; i++){
+            for (int j = 0; j < 3; j++) {
+                int finalI = i;
+                int finalJ = j;
+                field[i][j].setOnMouseClicked(event -> {
+                    if (field[finalI][finalJ].getImage().equals(empty)) {
+                        synchronized (game) {
+                            if (game.isCurrentPlayerNotBot() && !game.gameOver()) {
+                                game.set(finalI, finalJ, game.getTurn());
+                                game.changeTurn();
+                            }
+                        }
+                    }
+                });
+            }
+        }
+        Thread thread = new Thread(() -> {
+            while (!game.gameOver()) {
                 synchronized (game) {
                     try {
                         game.wait();
@@ -110,7 +112,27 @@ public class Main extends Application {
                     }
                 }
             }
-        }).start();
+        });
+        thread.setDaemon(true);
+        thread.start();
+    }
+
+    @Override
+    public void start(final Stage primaryStage) throws Exception {
+        AnchorPane mainMenu = FXMLLoader.load(getClass().getResource("/main_menu.fxml"));
+        AnchorPane gameField = FXMLLoader.load(getClass().getResource("/game_field.fxml"));
+        AnchorPane cpuSelect = FXMLLoader.load(getClass().getResource("/cpu_select.fxml"));
+        AnchorPane client = FXMLLoader.load(getClass().getResource("/client.fxml"));
+
+        final Scene mainMenuScene = new Scene(mainMenu);
+        final Scene gameFieldScene = new Scene(gameField);
+        final Scene cpuSelectScene = new Scene(cpuSelect);
+        final Scene clientScene = new Scene(client);
+
+        who = (ImageView) gameField.lookup("#who");
+        what = (ImageView) gameField.lookup("#what");
+
+        /// Game UI thread. Changes pictures.
 
         primaryStage.setTitle("Tic Tac Toe");
         primaryStage.setScene(mainMenuScene);
@@ -121,9 +143,9 @@ public class Main extends Application {
                 x.setOnMouseClicked(event -> {
                     primaryStage.setScene(gameFieldScene);
                     primaryStage.show();
-                    new Thread(() -> {
-                        game.startGame(new HumanPlayer(1), new HumanPlayer(2));
-                    }).start();
+                    game = new Controller();
+                    initGame();
+                    new Thread(() -> game.startGame(new HumanPlayer(1), new HumanPlayer(2))).start();
                 });
             } else if ("cpu_button".equals(x.getId())) {
                 x.setOnMouseClicked(event -> {
@@ -140,7 +162,8 @@ public class Main extends Application {
                     primaryStage.setScene(gameFieldScene);
                     primaryStage.show();
                     game = new ServerController();
-                    new Thread(() -> game.startGame(new HumanPlayer(1), new NetworkPlayer(2, ((ServerController) game).getSocket()))).start();
+                    initGame();
+                    new Thread(() -> game.startGame(new HumanPlayer(1), new NetworkPlayer())).start();
                 });
             }
         }
@@ -176,6 +199,7 @@ public class Main extends Application {
                         player2 = new HumanPlayer(2);
                     }
                     game = new Controller();
+                    initGame();
                     new Thread(() -> game.startGame(player1, player2)).start();
                 });
             } else if ("easy".equals(x.getId()) || "hard".equals(x.getId())) {
@@ -209,14 +233,9 @@ public class Main extends Application {
                         ip = ipField.getText();
                     }
                     Socket socket = null;
-                    try {
-                        socket = new Socket(ip, 8888);
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                    final NetworkPlayer player1 = new NetworkPlayer(2, socket);
-                    game = new NetController(player1.getSocket());
-                    new Thread(() -> game.startGame(player1, new HumanPlayer(1))).start();
+                    game = new NetController(ip);
+                    initGame();
+                    new Thread(() -> game.startGame(new NetworkPlayer(), new HumanPlayer(2))).start();
                 });
             }
         }
@@ -228,18 +247,6 @@ public class Main extends Application {
                 field[i][j].setFitWidth(100);
                 field[i][j].setX(i * 100);
                 field[i][j].setY(j * 100);
-                int finalI = i;
-                int finalJ = j;
-                field[i][j].setOnMouseClicked(event -> {
-                    if (field[finalI][finalJ].getImage().equals(empty)) {
-                        synchronized (game) {
-                            if (game.isCurrentPlayerNotBot() && !game.gameOver()) {
-                                game.set(finalI, finalJ, game.getTurn());
-                                game.changeTurn();
-                            }
-                        }
-                    }
-                });
                 gameField.getChildren().add(field[i][j]);
             }
         }

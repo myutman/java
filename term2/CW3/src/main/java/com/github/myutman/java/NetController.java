@@ -1,40 +1,54 @@
 package com.github.myutman.java;
 
-import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
 
 public class NetController extends Controller {
 
-    private Socket socket;
-    private DataInputStream dis;
+    private String ip;
     private DataOutputStream dos;
+    private Socket socket;
 
+    @Override
     public Socket getSocket() {
+        socket = null;
+        while (socket == null) {
+            try {
+                socket = new Socket(ip, 8888);
+            } catch (IOException e) {
+                socket = null;
+            }
+        }
         return socket;
     }
 
-    public NetController(Socket socket) {
-        this.socket = socket;
+    @Override
+    public void closeSocket() {
         try {
-            dis = new DataInputStream(socket.getInputStream());
+            socket.close();
         } catch (IOException e) {
-            System.err.println("error");
+            e.printStackTrace();
         }
-        try {
-            dos = new DataOutputStream(socket.getOutputStream());
-        } catch (IOException e) {
-            System.err.println("error");
-        }
+    }
+
+    public NetController(String ip) {
+        this.ip = ip;
     }
 
     @Override
     public void set(int i, int j, int side) {
         try {
+            dos = new DataOutputStream(getSocket().getOutputStream());
+        } catch (IOException e) {
+            System.err.println("error");
+        }
+        super.set(i, j, side);
+        try {
             dos.writeUTF(i + " " + j);
         } catch (IOException e) {
             e.printStackTrace();
         }
+        closeSocket();
     }
 }
