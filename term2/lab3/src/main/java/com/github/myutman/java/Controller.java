@@ -5,6 +5,9 @@ package com.github.myutman.java;
  */
 public class Controller {
 
+    /**
+     * Whose turn is it now.
+     */
     private int turn;
     private int state[][] = new int[3][3];
     private Player playerX;
@@ -28,6 +31,8 @@ public class Controller {
      * @return 0 if it is draw, 1 if X wins and 2 if O wins.
      */
     public int result() {
+        boolean f = gameOver();
+        if (!f) return -1;
         if (winX) return 1;
         if (winO) return 2;
         return 0;
