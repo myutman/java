@@ -164,9 +164,7 @@ public class ThreadPoolImpl {
         private void calc() {
             try {
                 R temp;
-                synchronized (supplier) {
-                    temp = supplier.get();
-                }
+                temp = supplier.get();
                 synchronized (this) {
                     value = temp;
                 }
