@@ -54,7 +54,7 @@ public class Main extends Application {
 
 
         /// Game UI thread. Changes pictures.
-        new Thread(() -> {
+        Thread thread = new Thread(() -> {
             while (true) {
                 synchronized (game) {
                     try {
@@ -103,7 +103,9 @@ public class Main extends Application {
                     }
                 }
             }
-        }).start();
+        });
+        thread.setDaemon(true);
+        thread.start();
 
         primaryStage.setTitle("Tic Tac Toe");
         primaryStage.setScene(mainMenuScene);
@@ -114,9 +116,9 @@ public class Main extends Application {
                 x.setOnMouseClicked(event -> {
                     primaryStage.setScene(gameFieldScene);
                     primaryStage.show();
-                    new Thread(() -> {
-                        game.startGame(new HumanPlayer(1), new HumanPlayer(2));
-                    }).start();
+                    Thread thread1 = new Thread(() -> game.startGame(new HumanPlayer(1), new HumanPlayer(2)));
+                    thread1.setDaemon(true);
+                    thread1.start();
                 });
             } else if ("cpu_button".equals(x.getId())) {
                 x.setOnMouseClicked(event -> {
@@ -156,9 +158,9 @@ public class Main extends Application {
                         }
                         player2 = new HumanPlayer(2);
                     }
-                    new Thread(() -> {
-                        game.startGame(player1, player2);
-                    }).start();
+                    Thread thread1 = new Thread(() -> game.startGame(player1, player2));
+                    thread1.setDaemon(true);
+                    thread1.start();
                 });
             } else if ("easy".equals(x.getId()) || "hard".equals(x.getId())) {
                 RadioButton b = (RadioButton) x;
@@ -192,7 +194,7 @@ public class Main extends Application {
                 field[i][j].setOnMouseClicked(event -> {
                     if (field[finalI][finalJ].getImage().equals(empty)) {
                         synchronized (game) {
-                            if (game.isCurrentPlayerNotBot() && !game.gameOver()) {
+                            if (game.isCurrentPlayerHuman() && !game.gameOver()) {
                                 game.set(finalI, finalJ, game.getTurn());
                                 game.changeTurn();
                             }

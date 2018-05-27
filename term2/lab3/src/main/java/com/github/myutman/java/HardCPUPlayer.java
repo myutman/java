@@ -25,7 +25,7 @@ public class HardCPUPlayer extends EasyCPUPlayer {
         if (Controller.oWins(state)) {
             return type == 2;
         }
-        if (Controller.draw(state)) return false;
+        if (Controller.isFieldFull(state)) return false;
         for (int i = 0; i < 3; i++) {
             for (int j = 0; j < 3; j++) {
                 if (state[i][j] == 0) {
@@ -52,7 +52,7 @@ public class HardCPUPlayer extends EasyCPUPlayer {
         if (Controller.oWins(state)) {
             return type == 2;
         }
-        if (Controller.draw(state)) return false;
+        if (Controller.isFieldFull(state)) return false;
         for (int i = 0; i < 3; i++) {
             for (int j = 0; j < 3; j++) {
                 if (state[i][j] == 0) {
@@ -79,7 +79,7 @@ public class HardCPUPlayer extends EasyCPUPlayer {
         if (Controller.oWins(state)) {
             return type == 2;
         }
-        if (Controller.draw(state)) return true;
+        if (Controller.isFieldFull(state)) return true;
         for (int i = 0; i < 3; i++) {
             for (int j = 0; j < 3; j++) {
                 if (state[i][j] == 0) {
@@ -106,7 +106,7 @@ public class HardCPUPlayer extends EasyCPUPlayer {
         if (Controller.oWins(state)) {
             return type == 2;
         }
-        if (Controller.draw(state)) return true;
+        if (Controller.isFieldFull(state)) return true;
         for (int i = 0; i < 3; i++) {
             for (int j = 0; j < 3; j++) {
                 if (state[i][j] == 0) {

@@ -119,7 +119,7 @@ public class ControllerTest {
 
     @Test
     public void notFull() throws Exception {
-        assertFalse(Controller.draw(new int[][] {
+        assertFalse(Controller.isFieldFull(new int[][] {
                 new int[] {2, 0, 1},
                 new int[] {1, 1, 2},
                 new int[] {2, 1, 2}
@@ -128,7 +128,7 @@ public class ControllerTest {
 
     @Test
     public void full() throws Exception {
-        assertTrue(Controller.draw(new int[][] {
+        assertTrue(Controller.isFieldFull(new int[][] {
                 new int[] {2, 2, 1},
                 new int[] {1, 1, 2},
                 new int[] {2, 1, 1}

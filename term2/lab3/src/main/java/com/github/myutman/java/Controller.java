@@ -89,9 +89,9 @@ public class Controller {
      * Checks if current player is bot.
      * @return true if he is bot and false otherwise
      */
-    public boolean isCurrentPlayerNotBot() {
-        if (turn == 1) return HumanPlayer.class.isInstance(playerX);
-        return HumanPlayer.class.isInstance(playerO);
+    public boolean isCurrentPlayerHuman() {
+        if (turn == 1) return playerX instanceof HumanPlayer;
+        return playerO instanceof HumanPlayer;
     }
 
     /**
@@ -152,40 +152,29 @@ public class Controller {
             for (int j = 1; j < 3; j++) {
                 if (state[i][j] != state[i][0]) flag = false;
             }
-            if (flag) {
-                if (state[i][0] == 2) {
-                    return true;
-                }
+            if (flag && state[i][0] == 2) {
+                return true;
             }
             flag = true;
             for (int j = 1; j < 3; j++) {
                 if (state[j][i] != state[0][i]) flag = false;
             }
-            if (flag) {
-                if (state[0][i] == 2) {
-                    return true;
-                }
+            if (flag && state[0][i] == 2) {
+                return true;
             }
         }
         boolean flag = true;
         for (int i = 1; i < 3; i++) {
-            if  (state[i][i] != state[0][0]) flag = false;
+            if (state[i][i] != state[0][0]) flag = false;
         }
-        if (flag) {
-            if (state[0][0] == 2) {
-                return true;
-            }
+        if (flag && state[0][0] == 2) {
+            return true;
         }
         flag = true;
         for (int i = 1; i < 3; i++) {
             if (state[2 - i][i] != state[2][0]) flag = false;
         }
-        if (flag) {
-            if (state[2][0] == 2) {
-                return true;
-            }
-        }
-        return false;
+        return flag && state[2][0] == 2;
     }
 
     /**
@@ -193,14 +182,13 @@ public class Controller {
      * @param state current position
      * @return true if it the field is full and false otherwise
      */
-    public static boolean draw(int[][] state) {
-        boolean flag = true;
+    public static boolean isFieldFull(int[][] state) {
         for (int i = 0; i < 3; i++) {
             for (int j = 0; j < 3; j++) {
-                if (state[i][j] == 0) flag = false;
+                if (state[i][j] == 0) return false;
             }
         }
-        return flag;
+        return true;
     }
 
     /**
@@ -216,9 +204,6 @@ public class Controller {
             winO = true;
             return true;
         }
-        if (draw(state)) {
-            return true;
-        }
-        return false;
+        return isFieldFull(state);
     }
 }
