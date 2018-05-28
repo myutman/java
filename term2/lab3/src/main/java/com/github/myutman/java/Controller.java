@@ -8,11 +8,11 @@ public class Controller {
     /**
      * Whose turn is it now.
      */
-    private int turn;
-    private int state[][] = new int[3][3];
+    private GameState turn;
+    private GameState state[][] = new GameState[3][3];
     private Player playerX;
     private Player playerO;
-    private GameResult result;
+    private GameState result;
 
     /**
      * Class constructor.
@@ -20,16 +20,16 @@ public class Controller {
     public Controller() {
         for (int i = 0; i < 3; i++) {
             for (int j = 0; j < 3; j++) {
-                state[i][j] = 0;
+                state[i][j] = GameState.None;
             }
         }
     }
 
     /**
      * Returns result of the game.
-     * @return GameResult.Draw if it is draw, GameResult.WinX if X wins, GameResult.WinO if O wins or GameResult.None if game is not over
+     * @return GameState.Draw if it is draw, GameState.X if X wins, GameState.O if O wins or GameState.None if game is not over
      */
-    public GameResult result() {
+    public GameState result() {
         return result;
     }
 
@@ -37,15 +37,16 @@ public class Controller {
      * Turn goes to next player.
      */
     public synchronized void changeTurn() {
-        turn = 3 - turn;
+        if (turn.equals(GameState.X)) turn = GameState.O;
+        else turn = GameState.X;
         notifyAll();
     }
 
-    public int getTurn() {
+    public GameState getTurn() {
         return turn;
     }
 
-    public int[][] getState(){
+    public GameState[][] getState(){
         return state;
     }
 
@@ -55,7 +56,7 @@ public class Controller {
      * @param j column
      * @param side value
      */
-    public void set(int i, int j, int side) {
+    public void set(int i, int j, GameState side) {
         state[i][j] = side;
     }
 
@@ -65,18 +66,18 @@ public class Controller {
      * @param playerO second player
      */
     public synchronized void startGame(Player playerX, Player playerO) {
-        result = GameResult.None;
+        result = GameState.None;
         this.playerX = playerX;
         this.playerO = playerO;
         for (int i = 0; i < 3; i++) {
             for (int j = 0; j < 3; j++) {
-                state[i][j] = 0;
+                state[i][j] = GameState.None;
             }
         }
         notifyAll();
-        turn = 1;
+        turn = GameState.X;
         while (!gameOver()) {
-            if (turn == 1) {
+            if (turn.equals(GameState.X)) {
                 playerX.makeTurn(this);
             } else {
                 playerO.makeTurn(this);
@@ -89,7 +90,7 @@ public class Controller {
      * @return true if he is bot and false otherwise
      */
     public boolean isCurrentPlayerHuman() {
-        if (turn == 1) return playerX instanceof HumanPlayer;
+        if (turn.equals(GameState.X)) return playerX instanceof HumanPlayer;
         return playerO instanceof HumanPlayer;
     }
 
@@ -98,42 +99,42 @@ public class Controller {
      * @param state current position
      * @return true if X wins and false otherwise
      */
-    public static boolean xWins(int[][] state) {
+    public static boolean xWins(GameState[][] state) {
         for (int i = 0; i < 3; i++) {
             boolean flag = true;
             for (int j = 1; j < 3; j++) {
-                if (state[i][j] != state[i][0]) flag = false;
+                if (!state[i][j].equals(state[i][0])) flag = false;
             }
             if (flag) {
-                if (state[i][0] == 1) {
+                if (state[i][0].equals(GameState.X)) {
                     return true;
                 }
             }
             flag = true;
             for (int j = 1; j < 3; j++) {
-                if (state[j][i] != state[0][i]) flag = false;
+                if (!state[j][i].equals(state[0][i])) flag = false;
             }
             if (flag) {
-                if (state[0][i] == 1) {
+                if (state[0][i].equals(GameState.X)) {
                     return true;
                 }
             }
         }
         boolean flag = true;
         for (int i = 1; i < 3; i++) {
-            if  (state[i][i] != state[0][0]) flag = false;
+            if  (!state[i][i].equals(state[0][0])) flag = false;
         }
         if (flag) {
-            if (state[0][0] == 1) {
+            if (state[0][0].equals(GameState.X)) {
                 return true;
             }
         }
         flag = true;
         for (int i = 1; i < 3; i++) {
-            if (state[2 - i][i] != state[2][0]) flag = false;
+            if (!state[2 - i][i].equals(state[2][0])) flag = false;
         }
         if (flag) {
-            if (state[2][0] == 1) {
+            if (state[2][0].equals(GameState.X)) {
                 return true;
             }
         }
@@ -145,35 +146,35 @@ public class Controller {
      * @param state current position
      * @return true if O wins and false otherwise
      */
-    public static boolean oWins(int[][] state) {
+    public static boolean oWins(GameState[][] state) {
         for (int i = 0; i < 3; i++) {
             boolean flag = true;
             for (int j = 1; j < 3; j++) {
-                if (state[i][j] != state[i][0]) flag = false;
+                if (!state[i][j].equals(state[i][0])) flag = false;
             }
-            if (flag && state[i][0] == 2) {
+            if (flag && state[i][0].equals(GameState.O)) {
                 return true;
             }
             flag = true;
             for (int j = 1; j < 3; j++) {
-                if (state[j][i] != state[0][i]) flag = false;
+                if (!state[j][i].equals(state[0][i])) flag = false;
             }
-            if (flag && state[0][i] == 2) {
+            if (flag && state[0][i].equals(GameState.O)) {
                 return true;
             }
         }
         boolean flag = true;
         for (int i = 1; i < 3; i++) {
-            if (state[i][i] != state[0][0]) flag = false;
+            if (!state[i][i].equals(state[0][0])) flag = false;
         }
-        if (flag && state[0][0] == 2) {
+        if (flag && state[0][0].equals(GameState.O)) {
             return true;
         }
         flag = true;
         for (int i = 1; i < 3; i++) {
-            if (state[2 - i][i] != state[2][0]) flag = false;
+            if (!state[2 - i][i].equals(state[2][0])) flag = false;
         }
-        return flag && state[2][0] == 2;
+        return flag && state[2][0].equals(GameState.O);
     }
 
     /**
@@ -181,10 +182,10 @@ public class Controller {
      * @param state current position
      * @return true if it the field is full and false otherwise
      */
-    public static boolean isFieldFull(int[][] state) {
+    public static boolean isFieldFull(GameState[][] state) {
         for (int i = 0; i < 3; i++) {
             for (int j = 0; j < 3; j++) {
-                if (state[i][j] == 0) return false;
+                if (state[i][j].equals(GameState.None)) return false;
             }
         }
         return true;
@@ -196,15 +197,15 @@ public class Controller {
      */
     public boolean gameOver() {
         if (xWins(state)) {
-            result = GameResult.WinX;
+            result = GameState.X;
             return true;
         }
         if (oWins(state)) {
-            result = GameResult.WinO;
+            result = GameState.O;
             return true;
         }
         if (isFieldFull(state)) {
-            result = GameResult.Draw;
+            result = GameState.Draw;
             return true;
         }
         return false;

@@ -64,34 +64,30 @@ public class Main extends Application {
                     }
                     for (int i = 0; i < 3; i++) {
                         for (int j = 0; j < 3; j++) {
-                            switch (game.getState()[i][j]) {
-                                case 0:
-                                    field[i][j].setImage(empty);
-                                    break;
-                                case 1:
-                                    field[i][j].setImage(imageX);
-                                    break;
-                                case 2:
-                                    field[i][j].setImage(imageO);
-                                    break;
+                            if (game.getState()[i][j].equals(GameState.None)) {
+                                field[i][j].setImage(empty);
+                            } else if (game.getState()[i][j].equals(GameState.X)) {
+                                field[i][j].setImage(imageX);
+                            } else if (game.getState()[i][j].equals(GameState.O)) {
+                                field[i][j].setImage(imageO);
                             }
                         }
                     }
                     if (game.gameOver()) {
-                        GameResult result = game.result();
-                        if (result.equals(GameResult.Draw)) {
+                        GameState result = game.result();
+                        if (result.equals(GameState.Draw)) {
                             who.setImage(null);
                             what.setImage(draw);
-                        } else if (result.equals(GameResult.WinX)) {
+                        } else if (result.equals(GameState.X)) {
                             who.setImage(imageX);
                             what.setImage(win);
                         }
-                        else if (result.equals(GameResult.WinO)) {
+                        else if (result.equals(GameState.O)) {
                             who.setImage(imageO);
                             what.setImage(win);
                         }
                     } else {
-                        if (game.getTurn() == 1) {
+                        if (game.getTurn().equals(GameState.X)) {
                             who.setImage(imageX);
                             what.setImage(turn);
                         } else {
@@ -114,7 +110,7 @@ public class Main extends Application {
                 x.setOnMouseClicked(event -> {
                     primaryStage.setScene(gameFieldScene);
                     primaryStage.show();
-                    Thread thread1 = new Thread(() -> game.startGame(new HumanPlayer(1), new HumanPlayer(2)));
+                    Thread thread1 = new Thread(() -> game.startGame(new HumanPlayer(GameState.X), new HumanPlayer(GameState.O)));
                     thread1.setDaemon(true);
                     thread1.start();
                 });
@@ -142,19 +138,19 @@ public class Main extends Application {
                     Player player1;
                     Player player2;
                     if ("x".equals(color.getSelectedToggle().getUserData())) {
-                        player1 = new HumanPlayer(1);
+                        player1 = new HumanPlayer(GameState.X);
                         if ("easy".equals(level.getSelectedToggle().getUserData())) {
-                            player2 = new EasyCPUPlayer(2);
+                            player2 = new EasyCPUPlayer(GameState.O);
                         } else {
-                            player2 = new HardCPUPlayer(2);
+                            player2 = new HardCPUPlayer(GameState.O);
                         }
                     } else {
                         if ("easy".equals(level.getSelectedToggle().getUserData())) {
-                            player1 = new EasyCPUPlayer(1);
+                            player1 = new EasyCPUPlayer(GameState.X);
                         } else {
-                            player1 = new HardCPUPlayer(1);
+                            player1 = new HardCPUPlayer(GameState.X);
                         }
-                        player2 = new HumanPlayer(2);
+                        player2 = new HumanPlayer(GameState.O);
                     }
                     Thread thread1 = new Thread(() -> game.startGame(player1, player2));
                     thread1.setDaemon(true);

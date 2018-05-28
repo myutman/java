@@ -8,10 +8,10 @@ import java.util.Random;
  */
 public class EasyCPUPlayer implements Player {
 
-    private int side;
+    private GameState side;
     private Random random;
 
-    public EasyCPUPlayer(int side) {
+    public EasyCPUPlayer(GameState side) {
         this.side = side;
         random = new Random(1488239228);
     }
@@ -21,7 +21,7 @@ public class EasyCPUPlayer implements Player {
         ArrayList<Cell> freeCells = new ArrayList<>();
         for (int i = 0; i < 3; i++) {
             for (int j = 0; j < 3; j++) {
-                if (controller.getState()[i][j] == 0) {
+                if (controller.getState()[i][j].equals(GameState.None)) {
                     freeCells.add(new Cell(i, j));
                 }
             }

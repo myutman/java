@@ -5,13 +5,13 @@ package com.github.myutman.java;
  */
 public class HumanPlayer implements Player {
 
-    private int side;
+    private GameState side;
 
     /**
      * Class constructor.
      * @param side what figures does he play
      */
-    public HumanPlayer(int side) {
+    public HumanPlayer(GameState side) {
         this.side = side;
     }
 
