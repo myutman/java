@@ -12,8 +12,7 @@ public class Controller {
     private int state[][] = new int[3][3];
     private Player playerX;
     private Player playerO;
-    private boolean winX;
-    private boolean winO;
+    private GameResult result;
 
     /**
      * Class constructor.
@@ -28,14 +27,10 @@ public class Controller {
 
     /**
      * Returns result of the game.
-     * @return 0 if it is draw, 1 if X wins and 2 if O wins.
+     * @return GameResult.Draw if it is draw, GameResult.WinX if X wins, GameResult.WinO if O wins or GameResult.None if game is not over
      */
-    public int result() {
-        boolean f = gameOver();
-        if (!f) return -1;
-        if (winX) return 1;
-        if (winO) return 2;
-        return 0;
+    public GameResult result() {
+        return result;
     }
 
     /**
@@ -70,8 +65,7 @@ public class Controller {
      * @param playerO second player
      */
     public synchronized void startGame(Player playerX, Player playerO) {
-        winX = false;
-        winO = false;
+        result = GameResult.None;
         this.playerX = playerX;
         this.playerO = playerO;
         for (int i = 0; i < 3; i++) {
@@ -202,13 +196,17 @@ public class Controller {
      */
     public boolean gameOver() {
         if (xWins(state)) {
-            winX = true;
+            result = GameResult.WinX;
             return true;
         }
         if (oWins(state)) {
-            winO = true;
+            result = GameResult.WinO;
             return true;
         }
-        return isFieldFull(state);
+        if (isFieldFull(state)) {
+            result = GameResult.Draw;
+            return true;
+        }
+        return false;
     }
 }

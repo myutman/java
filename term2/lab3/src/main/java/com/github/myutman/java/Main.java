@@ -78,19 +78,17 @@ public class Main extends Application {
                         }
                     }
                     if (game.gameOver()) {
-                        switch (game.result()) {
-                            case 0:
-                                who.setImage(null);
-                                what.setImage(draw);
-                                break;
-                            case 1:
-                                who.setImage(imageX);
-                                what.setImage(win);
-                                break;
-                            case 2:
-                                who.setImage(imageO);
-                                what.setImage(win);
-                                break;
+                        GameResult result = game.result();
+                        if (result.equals(GameResult.Draw)) {
+                            who.setImage(null);
+                            what.setImage(draw);
+                        } else if (result.equals(GameResult.WinX)) {
+                            who.setImage(imageX);
+                            what.setImage(win);
+                        }
+                        else if (result.equals(GameResult.WinO)) {
+                            who.setImage(imageO);
+                            what.setImage(win);
                         }
                     } else {
                         if (game.getTurn() == 1) {
