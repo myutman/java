@@ -101,7 +101,8 @@ public class FTPClientTest {
                 e.printStackTrace();
             }
         }).start();
-        File file = FTPClient.get(socketOfClient, ".bashrc");
+        File file = new File("." + File.separator + ".bashrc");
+        FTPClient.get(socketOfClient, ".bashrc", "." + File.separator + ".bashrc");
         assertNotNull(file);
         assertEquals(file.length(), 4);
         try (FileInputStream inputStream = new FileInputStream(file)) {

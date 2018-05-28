@@ -12,9 +12,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
+import static org.junit.Assert.*;
 
 public class FTPServerTest {
 
@@ -80,8 +78,9 @@ public class FTPServerTest {
         try (FileOutputStream outputStream = new FileOutputStream(newFile)) {
             outputStream.write(data);
         }
-        File file = FTPClient.get(socketOfClient, PATH + File.separator + "new_dir/new_file.dat");
-        assertNotNull(file);
+        File file = new File( "." + File.separator + "new_dir/new_file.dat");
+        file.getParentFile().mkdirs();
+        assertTrue(FTPClient.get(socketOfClient, PATH + File.separator + "new_dir/new_file.dat", "." + File.separator + "new_dir/new_file.dat"));
         assertEquals(4, file.length());
         try (FileInputStream inputStream = new FileInputStream(file)) {
             byte[] buffer = new byte[4];
@@ -94,13 +93,11 @@ public class FTPServerTest {
 
     @Test
     public void testGetDir() {
-        File file = FTPClient.get(socketOfClient, PATH + File.separator + "not_empty");
-        assertNull(file);
+        assertFalse(FTPClient.get(socketOfClient, PATH + File.separator + "not_empty", "." + File.separator + "not_empty"));
     }
 
     @Test
     public void testGetNotExists() {
-        File file = FTPClient.get(socketOfClient, PATH + File.separator + "not_exists");
-        assertNull(file);
+        assertFalse(FTPClient.get(socketOfClient, PATH + File.separator + "not_exists", "." + File.separator + "not_exists"));
     }
 }
