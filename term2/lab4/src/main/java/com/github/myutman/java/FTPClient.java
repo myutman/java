@@ -33,7 +33,7 @@ public class FTPClient {
             outMap.put("path", path);
             String data = new Gson().toJson(outMap, GSON_MAP_TYPE);
             outputStream.writeUTF(data);
-            //Input
+               //Input
             data = inputStream.readUTF();
             Map<String, Object> result = new Gson().fromJson(data, GSON_MAP_TYPE);
             return (List) result.get("list");
@@ -43,10 +43,10 @@ public class FTPClient {
     }
 
     /**
-     * Downloads file from the server and returns its descriptor.
+     * Downloads file from the server.
      * @param socket server to talk to
      * @param path path to the file
-     * @return new file that is copy of requested
+     * @return true if file was successfully downloaded and false otherwise
      */
     public static boolean get(Socket socket, String path, String destination) {
         try (DataInputStream inputStream = new DataInputStream(socket.getInputStream());
@@ -110,11 +110,7 @@ public class FTPClient {
                     File file = new File("." + File.separator + path);
                     file.getParentFile().mkdirs();
                     get(socket, path, file.getCanonicalPath());
-                    if (file != null) {
-                        System.out.println(file.getCanonicalPath());
-                    } else {
-                        System.out.println("null");
-                    }
+                    System.out.println(file.getCanonicalPath());
                 } else {
                     System.err.println("Incorrect command.");
                 }
