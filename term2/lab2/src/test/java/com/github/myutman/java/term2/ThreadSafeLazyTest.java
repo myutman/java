@@ -7,7 +7,7 @@ import static org.junit.Assert.*;
 
 public class ThreadSafeLazyTest {
 
-    int ct;
+    private int ct;
 
     @Before
     public void before() {

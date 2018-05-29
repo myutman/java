@@ -8,10 +8,10 @@ import java.util.function.Supplier;
 public class LazyFactory {
 
     /**
+     * Creates new lazy calculation object.
      * @param givenSupplier given supplier
      * @param <T> return type
      * @return value of calculation
-     * Creates new lazy calculation object.
      */
     public static <T> Lazy<T> createSimpleLazy(Supplier<T> givenSupplier) {
         return new Lazy<T>() {
@@ -32,10 +32,10 @@ public class LazyFactory {
 
 
     /**
+     * Creates new thread safe lazy calculation object.
      * @param givenSupplier given supplier
      * @param <T> return type
      * @return value of calculation
-     * Creates new thread safe lazy calculation object.
      */
     public static <T> Lazy<T> createThreadSafeLazy(Supplier<T> givenSupplier) {
         return new Lazy<T>() {
@@ -45,12 +45,14 @@ public class LazyFactory {
 
             @Override
             public T get() {
-                if (supplier != null) {
-                    synchronized (this) {
-                        if (supplier != null) {
-                            result = supplier.get();
-                            supplier = null;
-                        }
+                if (supplier == null) {
+                    return result;
+                }
+
+                synchronized (this) {
+                    if (supplier != null) {
+                        result = supplier.get();
+                        supplier = null;
                     }
                 }
                 return result;
