@@ -78,7 +78,7 @@ public class FTPClient {
         }
     }
 
-    private static void ifList(Socket socket, String path) {
+    private static void processList(Socket socket, String path) {
         List ans = list(socket, path);
         for (Object object: ans) {
             Map<String, Object> map = (Map<String, Object>) object;
@@ -87,7 +87,7 @@ public class FTPClient {
         System.out.println();
     }
 
-    private static void ifGet(Socket socket, String path) throws IOException {
+    private static void processGet(Socket socket, String path) throws IOException {
         File file = new File("." + File.separator + path);
         file.getParentFile().mkdirs();
         get(socket, path, file.getCanonicalPath());
@@ -116,9 +116,9 @@ public class FTPClient {
             path = scanner.next();
             try (Socket socket = new Socket(ip, port)) {
                 if ("list".equals(command)) {
-                    ifList(socket, path);
+                    processList(socket, path);
                 } else if ("get".equals(command)) {
-                    ifGet(socket, path);
+                    processGet(socket, path);
                 } else {
                     System.err.println("Incorrect command.");
                 }
