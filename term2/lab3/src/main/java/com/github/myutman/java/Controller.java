@@ -96,6 +96,7 @@ public class Controller {
      * @return true if he is bot and false otherwise
      */
     public boolean isCurrentPlayerHuman() {
+        if (turn.equals(GameState.Draw) || turn.equals(GameState.None)) throw new UnsupportedOperationException();
         if (turn.equals(GameState.X)) return playerX instanceof HumanPlayer;
         return playerO instanceof HumanPlayer;
     }
@@ -107,7 +108,7 @@ public class Controller {
      * @return true if X wins and false otherwise
      */
     public static boolean wins(GameState[][] state, GameState player) {
-        if (player.equals(GameState.None) || player.equals(GameState.Draw)) return false;
+        if (player.equals(GameState.None) || player.equals(GameState.Draw)) throw new UnsupportedOperationException();
         for (int i = 0; i < 3; i++) {
             boolean flag = true;
             for (int j = 1; j < 3; j++) {
