@@ -1,5 +1,7 @@
 package com.github.myutman.java;
 
+import com.sun.istack.internal.NotNull;
+
 /**
  * Simulates game between two players.
  */
@@ -29,6 +31,7 @@ public class Controller {
      * Returns result of the game.
      * @return GameState.Draw if it is draw, GameState.X if X wins, GameState.O if O wins or GameState.None if game is not over
      */
+    @NotNull
     public GameState result() {
         return result;
     }
@@ -37,15 +40,18 @@ public class Controller {
      * Turn goes to next player.
      */
     public synchronized void changeTurn() {
+        if (turn.equals(GameState.None) || turn.equals(GameState.Draw)) throw new UnsupportedOperationException();
         if (turn.equals(GameState.X)) turn = GameState.O;
-        else turn = GameState.X;
+        else if (turn.equals(GameState.O)) turn = GameState.X;
         notifyAll();
     }
 
+    @NotNull
     public GameState getTurn() {
         return turn;
     }
 
+    @NotNull
     public GameState[][] getState(){
         return state;
     }
@@ -95,18 +101,20 @@ public class Controller {
     }
 
     /**
-     * Checks if player X is the winner.
+     * Checks if specified player is the winner.
+     * @param player player needed to be ckecked
      * @param state current position
      * @return true if X wins and false otherwise
      */
-    public static boolean xWins(GameState[][] state) {
+    public static boolean wins(GameState[][] state, GameState player) {
+        if (player.equals(GameState.None) || player.equals(GameState.Draw)) return false;
         for (int i = 0; i < 3; i++) {
             boolean flag = true;
             for (int j = 1; j < 3; j++) {
                 if (!state[i][j].equals(state[i][0])) flag = false;
             }
             if (flag) {
-                if (state[i][0].equals(GameState.X)) {
+                if (state[i][0].equals(player)) {
                     return true;
                 }
             }
@@ -115,7 +123,7 @@ public class Controller {
                 if (!state[j][i].equals(state[0][i])) flag = false;
             }
             if (flag) {
-                if (state[0][i].equals(GameState.X)) {
+                if (state[0][i].equals(player)) {
                     return true;
                 }
             }
@@ -125,7 +133,7 @@ public class Controller {
             if  (!state[i][i].equals(state[0][0])) flag = false;
         }
         if (flag) {
-            if (state[0][0].equals(GameState.X)) {
+            if (state[0][0].equals(player)) {
                 return true;
             }
         }
@@ -133,48 +141,7 @@ public class Controller {
         for (int i = 1; i < 3; i++) {
             if (!state[2 - i][i].equals(state[2][0])) flag = false;
         }
-        if (flag) {
-            if (state[2][0].equals(GameState.X)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    /**
-     * Checks if player O is the winner.
-     * @param state current position
-     * @return true if O wins and false otherwise
-     */
-    public static boolean oWins(GameState[][] state) {
-        for (int i = 0; i < 3; i++) {
-            boolean flag = true;
-            for (int j = 1; j < 3; j++) {
-                if (!state[i][j].equals(state[i][0])) flag = false;
-            }
-            if (flag && state[i][0].equals(GameState.O)) {
-                return true;
-            }
-            flag = true;
-            for (int j = 1; j < 3; j++) {
-                if (!state[j][i].equals(state[0][i])) flag = false;
-            }
-            if (flag && state[0][i].equals(GameState.O)) {
-                return true;
-            }
-        }
-        boolean flag = true;
-        for (int i = 1; i < 3; i++) {
-            if (!state[i][i].equals(state[0][0])) flag = false;
-        }
-        if (flag && state[0][0].equals(GameState.O)) {
-            return true;
-        }
-        flag = true;
-        for (int i = 1; i < 3; i++) {
-            if (!state[2 - i][i].equals(state[2][0])) flag = false;
-        }
-        return flag && state[2][0].equals(GameState.O);
+        return flag && state[2][0].equals(player);
     }
 
     /**
@@ -196,11 +163,11 @@ public class Controller {
      * @return true if game is over and false otherwise
      */
     public boolean gameOver() {
-        if (xWins(state)) {
+        if (wins(state, GameState.X)) {
             result = GameState.X;
             return true;
         }
-        if (oWins(state)) {
+        if (wins(state, GameState.O)) {
             result = GameState.O;
             return true;
         }

@@ -19,10 +19,11 @@ public class HardCPUPlayer extends EasyCPUPlayer {
      * @return true if you can win or false otherwise
      */
     public static boolean forallWin(GameState[][] state, GameState type) {
-        if (Controller.xWins(state)) {
+        if (type.equals(GameState.None) || type.equals(GameState.Draw)) throw new UnsupportedOperationException();
+        if (Controller.wins(state, GameState.X)) {
             return type.equals(GameState.X);
         }
-        if (Controller.oWins(state)) {
+        if (Controller.wins(state, GameState.O)) {
             return type.equals(GameState.O);
         }
         if (Controller.isFieldFull(state)) return false;
@@ -47,10 +48,11 @@ public class HardCPUPlayer extends EasyCPUPlayer {
      * @return true if you can win or false otherwise
      */
     public static boolean existsWin(GameState[][] state, GameState type) {
-        if (Controller.xWins(state)) {
+        if (type.equals(GameState.None) || type.equals(GameState.Draw)) throw new UnsupportedOperationException();
+        if (Controller.wins(state, GameState.X)) {
             return type.equals(GameState.X);
         }
-        if (Controller.oWins(state)) {
+        if (Controller.wins(state, GameState.O)) {
             return type.equals(GameState.O);
         }
         if (Controller.isFieldFull(state)) return false;
@@ -74,10 +76,11 @@ public class HardCPUPlayer extends EasyCPUPlayer {
      * @return true if you can win or false otherwise
      */
     public static boolean forallDraw(GameState[][] state, GameState type) {
-        if (Controller.xWins(state)) {
+        if (type.equals(GameState.None) || type.equals(GameState.Draw)) throw new UnsupportedOperationException();
+        if (Controller.wins(state, GameState.X)) {
             return type.equals(GameState.X);
         }
-        if (Controller.oWins(state)) {
+        if (Controller.wins(state, GameState.O)) {
             return type.equals(GameState.O);
         }
         if (Controller.isFieldFull(state)) return true;
@@ -102,10 +105,11 @@ public class HardCPUPlayer extends EasyCPUPlayer {
      * @return true if you can win or false otherwise
      */
     public static boolean existsDraw(GameState[][] state, GameState type) {
-        if (Controller.xWins(state)) {
+        if (type.equals(GameState.None) || type.equals(GameState.Draw)) throw new UnsupportedOperationException();
+        if (Controller.wins(state, GameState.X)) {
             return type.equals(GameState.X);
         }
-        if (Controller.oWins(state)) {
+        if (Controller.wins(state, GameState.O)) {
             return type.equals(GameState.O);
         }
         if (Controller.isFieldFull(state)) return true;
