@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TreeView?>
+<AnchorPane prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1" fx:controller="javafx.scene.layout.AnchorPane">
+   <children>
+       <Label layoutX="50.0" layoutY="74.0" prefHeight="26" text="ip-address:"/>
+       <TextField fx:id="ip" layoutX="130.0" layoutY="74.0" prefHeight="26.0" prefWidth="200.0" promptText="ip-address" />
+       <Label layoutX="350.0" layoutY="74.0" prefHeight="26" text="port:"/>
+       <TextField fx:id="port" layoutX="390.0" layoutY="74.0" prefHeight="26.0" prefWidth="200.0" promptText="port" />
+       <Button fx:id="button" layoutX="630.0" layoutY="74.0" mnemonicParsing="false" text="Connect" />
+       <TreeView fx:id="tree" layoutX="50.0" layoutY="124.0" prefHeight="350.0" prefWidth="700.0" />
+       <ListView fx:id="list" layoutX="50.0" layoutY="498.0" prefHeight="50.0" prefWidth="700.0" />
+   </children>
+</AnchorPane>
