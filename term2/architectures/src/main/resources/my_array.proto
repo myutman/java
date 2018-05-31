@@ -1,0 +1,11 @@
+syntax = "proto2";
+
+package array;
+
+option java_package = "com.github.myutman.java";
+option java_outer_classname = "MyArrayProtos";
+
+message MyArray {
+    required int32 size = 1;
+    repeated int32 base = 2;
+}
