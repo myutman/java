@@ -1,0 +1,11 @@
+syntax = "proto2";
+
+package array;
+
+option java_package = "com.github.myutman.java";
+option java_outer_classname = "RequestProtos";
+
+message Request {
+    required int32 type = 1;
+    required int32 limit = 2;
+}
