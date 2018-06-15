@@ -32,14 +32,26 @@ public class Client {
         public double getM3() {
             return m3;
         }
+
+        public void setM3(double m3) {
+            this.m3 = m3;
+        }
+
+        public void setM2(double m2) {
+            this.m2 = m2;
+        }
+
+        public void setM1(double m1) {
+            this.m1 = m1;
+        }
     }
 
-    public static Metrics run(int n, int delta, int x) {
+    public static Metrics run(int n, int delta, int x, String ip) {
         long start = System.currentTimeMillis();
         long sm1 = 0;
         long sm2 = 0;
         for (int j = 0; j < x; j++) {
-            try (Socket socket = new Socket("127.0.0.1", 55555);
+            try (Socket socket = new Socket(ip, 55555);
                  InputStream inputStream = socket.getInputStream();
                  OutputStream outputStream = socket.getOutputStream()) {
                 MyArray.Builder builder = MyArray.newBuilder();
@@ -64,35 +76,30 @@ public class Client {
         return new Metrics(sm1 / (double) x, sm2 / (double) x, (System.currentTimeMillis() - start) / (double) x);
     }
 
-    public static Metrics runAll(int n, int m, int delta, int x) {
-        ExecutorService service = Executors.newCachedThreadPool();
-        ArrayList<Future<Metrics>> list = new ArrayList<>();
+    public static Metrics runAll(int n, int m, int delta, int x, String ip) {
+        ExecutorService service = Executors.newSingleThreadExecutor();
+        ArrayList<Thread> list = new ArrayList<>();
+        Metrics metrics = new Metrics(0, 0, 0);
         for (int i = 0; i < m; i++) {
-            list.add(service.submit(() -> run(n, delta, x)));
+            Thread thread = new Thread(() -> {
+                Metrics metrics1 = run(n, delta, x, ip);
+                synchronized (metrics) {
+                    metrics.setM1(metrics.getM1() + metrics1.getM1());
+                    metrics.setM2(metrics.getM2() + metrics1.getM2());
+                    metrics.setM3(metrics.getM3() + metrics1.getM3());
+                }
+            });
+            list.add(thread);
+            thread.start();
         }
-        double sm1 = 0;
-        double sm2 = 0;
-        double sm3 = 0;
-        for (Future<Metrics> future: list) {
+        for (Thread thread: list) {
             try {
-                Metrics metrics = future.get();
-                sm1 += metrics.getM1();
-                sm2 += metrics.getM2();
-                sm3 += metrics.getM3();
-            } catch (InterruptedException | ExecutionException e) {
-                return new Metrics(0, 0, 0);
+                thread.join();
+            } catch (InterruptedException ignored) {
+
             }
         }
         service.shutdown();
-        return new Metrics(sm1 / (double) m, sm2 / (double) m, sm3 / (double) m);
-    }
-
-    public static void main(String[] args) {
-        int n = 10000;//Integer.parseInt(args[0]);
-        int m = 5;//Integer.parseInt(args[1]);
-        int delta = 5;//Integer.parseInt(args[2]);
-        int x = 2;//Integer.parseInt(args[3]);
-        Metrics metrics = runAll(n, m, delta, x);
-        System.out.println(metrics.getM1() + " " + metrics.getM2() + " " + metrics.getM3());
+        return new Metrics(metrics.getM1() / (double) m, metrics.getM2() / (double) m, metrics.getM3() / (double) m);
     }
 }

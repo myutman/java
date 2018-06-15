@@ -36,7 +36,7 @@ public class ClientUI extends Application {
         }
     } 
 
-    final String ip = "127.0.0.1";
+    final String ip = "192.168.0.50";
 
     @Override
     public void start(Stage primaryStage) throws Exception {
@@ -230,7 +230,7 @@ public class ClientUI extends Application {
             for (int n = nFrom; n <= nTo; n += nStep) {
                 for (int m = mFrom; m <= mTo; m += mStep) {
                     for (int delta = deltaFrom; delta <= deltaTo; delta += deltaStep) {
-                        metrics = Client.runAll(n, m, delta, x);
+                        metrics = Client.runAll(n, m, delta, x, ip);
                         int changing = -1;
                         if (parId.equals("n_button")) {
                             changing = n;
