@@ -16,6 +16,7 @@ import java.util.concurrent.locks.ReentrantLock;
 
 public class NotBlockingServer implements Runnable {
 
+    private Socket setSocket = null;
     private int limit;
     private int started = 0;
     private int answered = 0;
@@ -24,8 +25,9 @@ public class NotBlockingServer implements Runnable {
         this.limit = -1;
     }
 
-    public NotBlockingServer(int limit) {
+    public NotBlockingServer(int limit, Socket setSocket) {
         this.limit = limit;
+        this.setSocket = setSocket;
     }
 
     @Override
@@ -189,6 +191,17 @@ public class NotBlockingServer implements Runnable {
         threadWrite.start();
         int ct = 0;
         System.out.println(limit);
+        if (setSocket != null) {
+            try {
+                RequestProtos.Request.newBuilder()
+                        .setLimit(0)
+                        .setType(0)
+                        .build()
+                        .writeDelimitedTo(setSocket.getOutputStream());
+            } catch (IOException e) {
+                return;
+            }
+        }
         while (limit == -1 || ct < limit) {
             try {
                 SocketChannel socketChannel = serverSocketChannel.accept();

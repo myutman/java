@@ -1,12 +1,32 @@
 group 'SPbAU'
 version '1.0-SNAPSHOT'
 
+buildscript {
+    repositories {
+        mavenCentral()
+        mavenLocal()
+    }
+    dependencies {
+        classpath group: 'de.dynamicfiles.projects.gradle.plugins', name: 'javafx-gradle-plugin', version: '8.8.2'
+    }
+}
+
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath "com.google.protobuf:protobuf-gradle-plugin:0.8.0"
+    }
+}
+
 apply plugin: 'java'
 
 sourceCompatibility = 1.8
 
 repositories {
     mavenCentral()
+    mavenLocal()
 }
 
 dependencies {
@@ -14,16 +34,6 @@ dependencies {
     compile "com.google.protobuf:protobuf-java:3.5.1"
 }
 
-buildscript {
-    repositories {
-        mavenCentral()
-        mavenLocal()
-    }
-    dependencies {
-        classpath "com.google.protobuf:protobuf-gradle-plugin:0.8.0"
-        classpath group: 'de.dynamicfiles.projects.gradle.plugins', name: 'javafx-gradle-plugin', version: '8.8.2'
-    }
-}
 apply plugin: "com.google.protobuf"
 
 apply plugin: 'javafx-gradle-plugin'

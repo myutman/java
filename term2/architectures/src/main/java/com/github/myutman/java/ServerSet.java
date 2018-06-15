@@ -22,13 +22,12 @@ public class ServerSet {
         while (true) {
             try (Socket socket = serverSocket.accept()) {
                 Request request = Request.parseDelimitedFrom(socket.getInputStream());
-                request.writeDelimitedTo(socket.getOutputStream());
                 if (request.getType() == START_SIMPLE) {
-                    new SimpleServer(request.getLimit()).run();
+                    new SimpleServer(request.getLimit(), socket).run();
                 } else if (request.getType() == START_READ_WRITE) {
-                    new ReadWriteServer(request.getLimit()).run();
+                    new ReadWriteServer(request.getLimit(), socket).run();
                 } else if (request.getType() == START_NOT_BLOCKING) {
-                    new NotBlockingServer(request.getLimit()).run();
+                    new NotBlockingServer(request.getLimit(), socket).run();
                 }
             } catch (IOException ignored) {
 
