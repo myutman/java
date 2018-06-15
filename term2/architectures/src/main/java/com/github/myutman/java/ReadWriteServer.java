@@ -16,13 +16,15 @@ public class ReadWriteServer implements Runnable {
 
     private int limit;
     private int answered = 0;
+    private Socket setSocket = null;
 
     ReadWriteServer() {
         limit = -1;
     }
 
-    ReadWriteServer(int limit) {
+    ReadWriteServer(int limit, Socket setSocket) {
         this.limit = limit;
+        this.setSocket = setSocket;
     }
 
     @Override
@@ -36,6 +38,17 @@ public class ReadWriteServer implements Runnable {
         }
         ExecutorService pool = Executors.newCachedThreadPool();
         int ct = 0;
+        if (setSocket != null) {
+            try {
+                RequestProtos.Request.newBuilder()
+                        .setLimit(0)
+                        .setType(0)
+                        .build()
+                        .writeDelimitedTo(setSocket.getOutputStream());
+            } catch (IOException e) {
+                return;
+            }
+        }
         while (limit == -1 || ct < limit) {
             ExecutorService sender = Executors.newSingleThreadExecutor();
             try {

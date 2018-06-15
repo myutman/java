@@ -12,6 +12,7 @@ import java.util.Arrays;
 
 public class SimpleServer implements Runnable {
 
+    private Socket setSocket = null;
     private int limit;
     private int answered = 0;
 
@@ -19,8 +20,9 @@ public class SimpleServer implements Runnable {
         this.limit = -1;
     }
 
-    public SimpleServer(int limit) {
+    public SimpleServer(int limit, Socket setSocket) {
         this.limit = limit;
+        this.setSocket = setSocket;
     }
 
     @Override
@@ -34,6 +36,17 @@ public class SimpleServer implements Runnable {
         }
         System.out.println(limit);
         int ct = 0;
+        if (setSocket != null) {
+            try {
+                RequestProtos.Request.newBuilder()
+                        .setLimit(0)
+                        .setType(0)
+                        .build()
+                        .writeDelimitedTo(setSocket.getOutputStream());
+            } catch (IOException e) {
+                return;
+            }
+        }
         while (limit == -1 || ct < limit) {
             Socket socket;
             try {
