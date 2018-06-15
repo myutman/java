@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.RadioButton?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+
+<AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.github.myutman.java.ClientUI">
+   <children>
+       <RadioButton fx:id="n_button" layoutX="46.0" layoutY="40.0" text="N" />
+       <RadioButton fx:id="m_button" layoutX="46.0" layoutY="70.0" text="M" />
+       <RadioButton fx:id="delta_button" layoutX="46.0" layoutY="100.0" text="Delta" />
+       <Label layoutX="68.0" layoutY="130.0" text="X" />
+       <TextField fx:id="n_field_from" layoutX="146.0" layoutY="40.0" prefWidth="50" />
+       <TextField fx:id="m_field_from" layoutX="146.0" layoutY="70.0" prefWidth="50" />
+       <TextField fx:id="delta_field_from" layoutX="146.0" layoutY="100.0" prefWidth="50" />
+       <TextField layoutX="146.0" layoutY="130.0" prefWidth="50" fx:id="x_field_from" />
+       <Label fx:id="n_dash" layoutX="209.0" layoutY="42.0" text="-" />
+       <Label fx:id="m_dash" layoutX="209.0" layoutY="72.0" text="-" />
+       <Label fx:id="delta_dash" layoutX="209.0" layoutY="102.0" text="-" />
+       <TextField fx:id="n_field_to" layoutX="226.0" layoutY="40.0" prefWidth="50" />
+       <TextField fx:id="m_field_to" layoutX="226.0" layoutY="70.0" prefWidth="50" />
+       <TextField fx:id="delta_field_to" layoutX="226.0" layoutY="100.0" prefWidth="50" />
+       <TextField fx:id="n_field_step" layoutX="286.0" layoutY="40.0" prefWidth="50" />
+       <TextField fx:id="m_field_step" layoutX="286.0" layoutY="70.0" prefWidth="50" />
+       <TextField fx:id="delta_field_step" layoutX="286.0" layoutY="100.0" prefWidth="50" />
+       <Button fx:id="test" layoutX="195.0" layoutY="207.0" mnemonicParsing="false" text="Test!" />
+       <RadioButton fx:id="simple" layoutX="408.0" layoutY="40.0" mnemonicParsing="false" text="Simple" />
+       <RadioButton fx:id="read_write" layoutX="408.0" layoutY="70.0" mnemonicParsing="false" text="Read write" />
+       <RadioButton fx:id="not_blocking" layoutX="408.0" layoutY="100.0" mnemonicParsing="false" text="Not blocking" />
+   </children>
+</AnchorPane>

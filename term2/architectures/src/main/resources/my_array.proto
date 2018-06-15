@@ -8,4 +8,6 @@ option java_outer_classname = "MyArrayProtos";
 message MyArray {
     required int32 size = 1;
     repeated int32 base = 2;
+    optional int64 query_time = 3;
+    optional int64 client_time = 4;
 }
